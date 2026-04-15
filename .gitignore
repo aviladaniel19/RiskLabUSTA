@@ -1,0 +1,69 @@
+# Variables de entorno (API keys)
+.env
+
+# Datos crudos descargados
+data/raw/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Entorno virtual
+venv/
+.venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# LaTeX / Documentation
+*.tex
+*.log
+*.aux
+*.synctex.gz
+
+# R
+.Rhistory
+.Rproj.user/
+*.Rproj
+
+# IDE settings
+*.swp
+*.swo
+*~
+
+# OS cache
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Coverage reports
+htmlcov/
+.coverage
+.pytest_cache/
+coverage.xml
+
+# Built files
+dist/
+build/
+*.egg-info/

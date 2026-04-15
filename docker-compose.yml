@@ -1,0 +1,82 @@
+# =====================================================================
+# docker-compose.yml — RiskLab USTA
+#
+# Orquesta el backend (FastAPI) y el frontend (Streamlit).
+#
+# GUIA RAPIDA:
+#   docker-compose up -d          # Arranca todo en segundo plano
+#   docker-compose logs -f        # Ver logs en tiempo real
+#   docker-compose down           # Detiene y elimina contenedores
+#   docker-compose build          # Reconstruye imagenes
+#
+# ACCESOS:
+#   Backend API:  http://localhost:8000
+#   Swagger /docs: http://localhost:8000/docs
+#   Dashboard:    http://localhost:8501
+# =====================================================================
+
+version: "3.9"
+
+services:
+
+  # ══════════════════════════════════════════════
+  # SERVICIO 1: Backend FastAPI
+  # ══════════════════════════════════════════════
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: risklab_backend
+    ports:
+      - "8000:8000"       # Puerto local:Puerto contenedor
+    env_file:
+      - ./backend/.env    # Carga API keys y configuracion
+    volumes:
+      # Hot-reload: cambios en backend/ se reflejan sin rebuild
+      - ./backend:/app
+      # Preserva __pycache__ dentro del contenedor (mejor rendimiento)
+      - /app/__pycache__
+    networks:
+      - risklab-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ══════════════════════════════════════════════
+  # SERVICIO 2: Frontend Streamlit
+  # ══════════════════════════════════════════════
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: risklab_frontend
+    ports:
+      - "8501:8501"
+    environment:
+      # BACKEND_URL usa el NOMBRE DEL SERVICIO (no localhost).
+      # Docker resuelve "backend" como la IP del contenedor backend
+      # dentro de la red interna risklab-net (DNS interno de Docker).
+      # Desde tu PC usas localhost:8000; dentro de Docker es backend:8000.
+      - BACKEND_URL=http://backend:8000
+    volumes:
+      - ./frontend:/app
+      - /app/__pycache__
+    depends_on:
+      backend:
+        condition: service_healthy  # Espera que el backend responda /
+    networks:
+      - risklab-net
+    restart: unless-stopped
+
+# ══════════════════════════════════════════════
+# RED INTERNA
+# ══════════════════════════════════════════════
+networks:
+  risklab-net:
+    # Red bridge privada: los contenedores se ven entre si
+    # pero estan aislados del exterior (excepto por los ports publicados)
+    driver: bridge

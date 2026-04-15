@@ -1,0 +1,31 @@
+# ─────────────────────────────────────────────
+# RiskLab API — Backend Dependencies
+# Versiones fijas para reproducibilidad exacta
+# ─────────────────────────────────────────────
+
+# ── FastAPI y servidor ─────────────────────
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+
+# ── Pydantic y configuración ───────────────
+pydantic>=2.7.0
+pydantic-settings>=2.2.1
+
+# ── APIs financieras ───────────────────────
+yfinance>=0.2.40
+fredapi>=0.5.1
+
+# ── Data Science ──────────────────────────
+pandas>=2.2.0
+numpy>=1.26.0
+scipy>=1.13.0
+statsmodels>=0.14.2
+scikit-learn>=1.4.0
+
+# ── Modelos de volatilidad ────────────────
+arch>=7.0.0
+
+# ── Utilidades ────────────────────────────
+python-dotenv>=1.0.1
+requests>=2.32.0
