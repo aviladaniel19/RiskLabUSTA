@@ -19,7 +19,7 @@ from typing import Annotated, Optional
 from fastapi import FastAPI, Depends, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi import Request
 
 from app.config import get_settings, Settings
@@ -178,10 +178,19 @@ def get_risk_service(
 # ENDPOINTS
 # ══════════════════════════════════════════════
 
-# ── HEALTH CHECK ──────────────────────────────
+# ── UI y HEALTH CHECK ─────────────────────
 
-@app.get("/", tags=["Core"], summary="Health check de la API")
-async def root():
+@app.get("/", tags=["Core"], summary="Dashboard Frontend UI", include_in_schema=False)
+async def serve_ui():
+    """Sirve la interfaz gráfica del Dashboard (HTML principal)."""
+    import os
+    file_path = os.path.join(os.path.dirname(__file__), "static", "index.html")
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    return {"error": "Dashboard UI no encontrado en static/index.html"}
+
+@app.get("/health", tags=["Core"], summary="Health check de la API")
+async def health_check():
     """Verifica que la API está operativa."""
     return {
         "status": "ok",

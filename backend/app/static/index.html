@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RiskLab USTA — Dashboard de Riesgo</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh}
+.shell{max-width:1280px;margin:0 auto;padding:1.5rem}
+.header{display:flex;flex-direction:column;gap:1rem;padding-bottom:1.25rem;border-bottom:1px solid #1e2435;margin-bottom:1.5rem}
+.header-top{display:flex;justify-content:space-between;align-items:flex-end}
+.header-left h1{font-size:18px;font-weight:600;color:#f1f5f9;letter-spacing:.02em}
+.header-left p{font-size:12px;color:#64748b;margin-top:3px}
+.ts{font-size:11px;font-family:'SF Mono','Fira Code',monospace;color:#475569;text-align:right}
+.form-panel{background:#161b26;border:1px solid #1e2435;border-radius:10px;padding:1rem;display:flex;gap:15px;align-items:flex-end}
+.form-grp{display:flex;flex-direction:column;gap:5px}
+.form-grp label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.06em}
+.form-input{padding:8px;background:#0f1117;border:1px solid #1e2435;color:#e2e8f0;border-radius:6px;font-size:13px;font-family:'SF Mono',monospace}
+.btn-analizar{padding:9px 18px;background:#10b981;color:#0f1117;border:none;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;transition:opacity .15s}
+.btn-analizar:hover{opacity:.8}
+.btn-analizar:disabled{background:#475569;cursor:not-allowed}
+.tabs{display:flex;gap:0;border-bottom:1px solid #1e2435;margin-bottom:1.5rem}
+.tab{padding:9px 18px;font-size:13px;background:transparent;border:0;border-bottom:2px solid transparent;color:#64748b;cursor:pointer;transition:all .15s;letter-spacing:.01em}
+.tab:hover{color:#94a3b8;background:rgba(255,255,255,.03)}
+.tab.act{color:#e2e8f0;border-bottom-color:#3b82f6;font-weight:500}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.25rem}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:1.25rem}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:1.25rem}
+.mc{background:transparent;border:1px solid #10b981;border-radius:10px;padding:1rem;color:#10b981}
+.ml{font-size:11px;color:#10b981;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
+.mv{font-size:22px;font-weight:600;font-family:'SF Mono','Fira Code',monospace;color:#10b981}
+.ms{font-size:11px;color:#10b981;margin-top:3px;opacity:.7}
+.card{background:#161b26;border:1px solid #1e2435;border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:1.25rem}
+.ct{font-size:11px;font-weight:500;color:#64748b;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+.ht{width:100%;border-collapse:collapse}
+.ht th,.ht td{padding:8px 12px;font-size:12px;text-align:right;border-bottom:1px solid #1e2435}
+.ht th{color:#64748b;font-weight:500;text-align:left}
+.ht td:first-child{text-align:left;font-weight:500;color:#e2e8f0}
+.ht tr:last-child td{border-bottom:0}
+.sig{display:inline-flex;align-items:center;font-size:11px;padding:3px 9px;border-radius:5px;font-weight:600;letter-spacing:.03em}
+.sb{background:rgba(16,185,129,.15);color:#34d399}
+.ss{background:rgba(239,68,68,.15);color:#f87171}
+.sn{background:rgba(100,116,139,.12);color:#94a3b8}
+.srow{display:grid;grid-template-columns:88px repeat(4,1fr);gap:6px;align-items:center}
+.srow-cell{text-align:center;padding:9px 4px;border-top:1px solid #1e2435}
+.srow-name{font-size:13px;font-weight:600;padding:9px 4px;border-top:1px solid #1e2435;color:#e2e8f0}
+.srow-hdr{font-size:11px;font-weight:500;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;padding-bottom:8px}
+.srow-hdr:first-child{text-align:left}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;font-family:'SF Mono','Fira Code',monospace}
+.bar-track{height:5px;background:#1e2435;border-radius:3px;flex:1}
+.bar-fill{height:5px;border-radius:3px}
+@media(max-width:700px){.g4,.g3{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div class="header-top">
+      <div class="header-left">
+        <h1>RiskLab USTA</h1>
+        <p>Tablero Interactivo de Riesgo Financiero &nbsp;·&nbsp; Prof. Javier Mauricio Sierra</p>
+      </div>
+      <div class="ts" id="ts">Esperando datos...</div>
+    </div>
+    <div class="form-panel">
+      <div class="form-grp" style="flex:2">
+        <label>Tickers (separados por coma)</label>
+        <input type="text" id="inp-tickers" class="form-input" value="AAPL, MSFT, GOOGL, AMZN, TSLA">
+      </div>
+      <div class="form-grp" style="flex:1">
+        <label>Benchmark</label>
+        <select id="inp-bench" class="form-input" style="font-family: inherit">
+          <option value="^GSPC">S&P 500 (^GSPC)</option>
+          <option value="^DJI">Dow Jones (^DJI)</option>
+          <option value="^IXIC">NASDAQ (^IXIC)</option>
+        </select>
+      </div>
+      <div class="form-grp" style="flex:1">
+        <label>Período</label>
+        <select id="inp-per" class="form-input" style="font-family: inherit">
+          <option value="1y">1 Año</option>
+          <option value="2y" selected>2 Años</option>
+          <option value="5y">5 Años</option>
+        </select>
+      </div>
+      <div class="form-grp">
+        <button id="btn-analizar" class="btn-analizar" onclick="loadData()">Analizar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab act" onclick="sw('perf',this)">A. Rendimiento</button>
+    <button class="tab" onclick="sw('risk',this)">B. Riesgo</button>
+    <button class="tab" onclick="sw('optim',this)">C. Optimización</button>
+    <button class="tab" onclick="sw('sig',this)">D. Señales</button>
+  </div>
+
+  <div id="s-perf"></div>
+  <div id="s-risk" style="display:none"></div>
+  <div id="s-optim" style="display:none"></div>
+  <div id="s-sig" style="display:none"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+/* ── GLOBAL STATE ────────────────────────────────────────────── */
+let GLOBAL = null;
+let charts = {};
+
+/* ── UTILS ───────────────────────────────────────────────────── */
+const pct=(v,d=2)=>(v*100).toFixed(d)+'%';
+const pctS=(v,d=2)=>(v>=0?'+':'')+pct(v,d);
+const f2=v=>v.toFixed(2), f3=v=>v.toFixed(3);
+const clr=v=>v>=0?`rgba(59,130,246,${.12+v*.45})`:`rgba(239,68,68,${.12-v*.4})`;
+const tc='#64748b', gc='rgba(255,255,255,.05)';
+const axBase={grid:{color:gc},ticks:{color:tc,font:{size:11}}};
+const CLRS=['#3b82f6','#10b981','#f59e0b','#a78bfa','#f87171','#ec4899','#14b8a6','#8b5cf6'];
+const sigCls=s=>s.includes('COMPRA')?'sb':s.includes('VENDE')?'ss':'sn';
+function regCh(id, c){ if(charts[id]) charts[id].destroy(); charts[id]=new Chart(id,c); }
+const step=a=>{const s=Math.ceil(a.length/120);return a.filter((_,i)=>i%s===0)};
+
+/* ── API CALLS ───────────────────────────────────────────────── */
+async function api(path, p={}, method='GET', body=null) {
+  let url = new URL(path, window.location.origin);
+  Object.keys(p).forEach(k => url.searchParams.append(k, p[k]));
+  let opt = { method, headers: {'Content-Type': 'application/json'} };
+  if(body) opt.body = JSON.stringify(body);
+  let res = await fetch(url, opt);
+  if(!res.ok) throw new Error(`Error API (${res.status}): ` + await res.text());
+  return await res.json();
+}
+
+async function loadData() {
+  const btn = document.getElementById('btn-analizar');
+  const ts = document.getElementById('ts');
+  btn.innerText = "Calculando..."; btn.disabled = true;
+  ts.innerHTML = "Llamando al motor FastAPI...";
+  
+  try {
+    const rawT = document.getElementById('inp-tickers').value.split(',').map(s=>s.trim().toUpperCase()).filter(s=>s);
+    if(rawT.length<2) throw new Error("Mínimo 2 tickers requeridos");
+    const bench = document.getElementById('inp-bench').value;
+    const per = document.getElementById('inp-per').value;
+    
+    // Pesos equitativos (asegurar que sumen 1.0 exacto)
+    let w = rawT.map(()=>parseFloat((1.0/rawT.length).toFixed(4)));
+    w[0] += (1.0 - w.reduce((a,b)=>a+b,0)); 
+
+    // Paralelizamos las llamadas intensivas
+    let pCapm = api('/capm', {tickers: rawT.join(','), periodo: per});
+    let pMacro = api('/macro', {tickers: rawT.join(','), pesos: w.join(','), periodo: per});
+    let pAlert = api('/alertas', {tickers: rawT.join(','), periodo: per});
+    let pVar = api('/var', {}, 'POST', {tickers:rawT, pesos:w, nivel_confianza:0.95, periodo:per});
+    let pFront = api('/frontera-eficiente', {}, 'POST', {tickers:rawT, pesos:w, nivel_confianza:0.95, periodo:per});
+    
+    const [capm, macro, alertas, varData, front] = await Promise.all([pCapm, pMacro, pAlert, pVar, pFront]);
+    
+    let pRends = Promise.all(rawT.map(t=>api(`/rendimientos/${t}`, {periodo:per})));
+    let pInds = Promise.all(rawT.map(t=>api(`/indicadores/${t}`, {periodo:per})));
+    let pPx = Promise.all(rawT.map(t=>api(`/precios/${t}`, {periodo:per})));
+    let pGarch = api(`/garch/${rawT[0]}`, {periodo:per}).catch(()=>null);
+    let pSpx = api(`/precios/SPY`, {periodo:per}); // proxy robusto para spx data base
+    
+    GLOBAL = { tickers:rawT, pesos:w, capm, macro, alertas, varData, front, 
+               rends: await pRends, ind: await pInds, precios: await pPx, 
+               garch: await pGarch, spx: await pSpx };
+               
+    ts.innerHTML = `<span style="color:#10b981">●</span> Sincronizado &nbsp;·&nbsp; ${new Date().toLocaleTimeString('es-CO')}`;
+    
+    // Forzar re-render de la pestaña actual
+    let act = document.querySelector('.tab.act');
+    if(act) sw(act.getAttribute('onclick').match(/'([^']+)'/)[1], act);
+
+  } catch(err) {
+    console.error(err);
+    ts.innerHTML = `<span style="color:#f87171">Error: ${err.message}</span>`;
+  } finally {
+    btn.innerText = "Analizar"; btn.disabled = false;
+  }
+}
+
+/* ── TAB RENDERING ───────────────────────────────────────────── */
+
+function renderPerf(){
+  if(!GLOBAL) return;
+  const el = document.getElementById('s-perf');
+  const m = GLOBAL.macro; const c = GLOBAL.capm;
+  const pd = m.desempeno_portafolio; const bd = m.desempeno_benchmark;
+  
+  el.innerHTML=`
+    <div class="g4">
+      <div class="mc"><div class="ml">Retorno portafolio</div><div class="mv">${pctS(pd.rendimiento_anualizado)}</div><div class="ms">benchmark: ${pctS(bd.rendimiento_anualizado)}</div></div>
+      <div class="mc"><div class="ml">Ratio de Sharpe</div><div class="mv">${f3(pd.sharpe_ratio)}</div><div class="ms">benchmark: ${f3(bd.sharpe_ratio)}</div></div>
+      <div class="mc"><div class="ml">Tracking Error</div><div class="mv">${pct(m.tracking_error)}</div><div class="ms">Info Ratio: ${f2(m.information_ratio)}</div></div>
+      <div class="mc"><div class="ml">Alpha de Jensen</div><div class="mv">${pctS(m.alpha_jensen)}</div><div class="ms">exceso anual vs CAPM</div></div>
+    </div>
+    <div class="card">
+      <div class="ct">Composición y perfil del portafolio construido equitativamente</div>
+      <div style="padding:4px 0">
+        ${GLOBAL.tickers.map((t,i)=>`
+          <div style="padding:7px 0;border-bottom:1px solid #1e2435">
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:13px;font-weight:600;color:${CLRS[i%CLRS.length]}">${t}</span>
+              <span style="font-size:12px;font-family:'SF Mono',monospace;color:#94a3b8">${pct(GLOBAL.pesos[i],0)} &nbsp;β ${f2(c.activos.find(x=>x.ticker===t)?.beta||1)}</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width:${GLOBAL.pesos[i]*600}px;max-width:100%;background:${CLRS[i%CLRS.length]};opacity:.7"></div></div>
+          </div>`).join('')}
+        <div style="display:flex;justify-content:space-between;padding-top:10px;font-size:11px;color:#64748b">
+          <span>Volatilidad anual portafolio: <span style="font-family:'SF Mono',monospace;color:#94a3b8">${pct(pd.volatilidad_anualizada)}</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Retorno vs Riesgo por Activo</div>
+      <div style="position:relative;height:220px"><canvas id="c-rr"></canvas></div>
+    </div>`;
+
+    let rrD = GLOBAL.rends.map((r,i)=>({
+        x: r.estadisticas.volatilidad_anualizada*100, 
+        y: r.estadisticas.media_anualizada*100, 
+        n: r.ticker 
+    }));
+    regCh('c-rr',{type:'scatter',data:{datasets:[{data:rrD,backgroundColor:CLRS.slice(0,rrD.length),pointRadius:9,pointHoverRadius:11}]},
+        options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const d=rrD[ctx.dataIndex];return `${d.n}  σ:${f1(d.x)}%  μ:${f1(d.y)}%`}}}},
+        scales:{x:{...axBase.x,title:{display:true,text:'Volatilidad anual (%)',color:tc,font:{size:11}}},
+                y:{...axBase.y,title:{display:true,text:'Retorno anual (%)',color:tc,font:{size:11}}}}}});
+}
+
+function renderRisk(){
+  if(!GLOBAL) return;
+  const el = document.getElementById('s-risk');
+  const pd = GLOBAL.macro.desempeno_portafolio;
+  const bd = GLOBAL.macro.desempeno_benchmark;
+  const v = GLOBAL.varData;
+  const c = GLOBAL.capm;
+  const betaPort = c.activos.reduce((sum, a, i)=>sum+(a.beta*GLOBAL.pesos[i]),0);
+  
+  let garchHtml = GLOBAL.garch ? `<div class="card" style="margin-bottom:0">
+        <div class="ct">Pronóstico Volatilidad — ${GLOBAL.garch.mejor_modelo} (${GLOBAL.garch.ticker})</div>
+        <div style="position:relative;height:200px"><canvas id="c-garch"></canvas></div>
+      </div>` : `<div class="card" style="margin-bottom:0;display:flex;align-items:center;justify-content:center"><span style="color:#64748b">Datos GARCH no disponibles</span></div>`;
+
+  el.innerHTML=`
+    <div class="g3">
+      <div class="mc"><div class="ml">Max drawdown portafolio</div><div class="mv">${pct(pd.maximo_drawdown)}</div><div class="ms">benchmark: ${pct(bd.maximo_drawdown)}</div></div>
+      <div class="mc"><div class="ml">Beta estimado</div><div class="mv">${f2(betaPort)}</div><div class="ms">${betaPort>1.2?'agresivo':betaPort>0.8?'neutro':'defensivo'}</div></div>
+      <div class="mc"><div class="ml">CVaR 95% diario (ES)</div><div class="mv">${v.cvar.hist_95_pct}</div><div class="ms">expected shortfall</div></div>
+    </div>
+    <div class="card">
+      <div class="ct">Value at Risk (VaR) — Nivel de Confianza: ${v.nivel_confianza*100}%</div>
+      <div style="overflow-x:auto">
+      <table class="ht">
+        <thead><tr><th>Método</th><th>VaR Diario</th><th>VaR Anualizado</th><th>CVaR</th></tr></thead>
+        <tbody>
+          <tr><td>Paramétrico</td><td>${v.parametrico.var_diario_pct}</td><td>${v.parametrico.var_anual_pct}</td><td>${v.cvar.param_95_pct}</td></tr>
+          <tr><td>Histórico</td><td>${v.historico.var_diario_pct}</td><td>${v.historico.var_anual_pct}</td><td>${v.cvar.hist_95_pct}</td></tr>
+          <tr><td>Montecarlo</td><td>${v.montecarlo.var_diario_pct}</td><td>${v.montecarlo.var_anual_pct}</td><td>${v.cvar.mc_95_pct}</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card" style="margin-bottom:0">
+        <div class="ct">Riesgo Idiosincrático vs Sistemático (CAPM β)</div>
+        <div style="position:relative;height:200px"><canvas id="c-sml"></canvas></div>
+      </div>
+      ${garchHtml}
+    </div>`;
+
+  if(GLOBAL.garch){
+    regCh('c-garch',{type:'line',data:{
+      labels:Array.from({length:GLOBAL.garch.pronostico_volatilidad.length},(_,i)=>'D+'+(i+1)),
+      datasets:[{label:'Volatilidad anualizada (%)',data:GLOBAL.garch.pronostico_volatilidad.map(v=>v*100),borderColor:'#f59e0b',borderWidth:2,pointRadius:3,pointBackgroundColor:'#f59e0b',fill:true,backgroundColor:'rgba(245,158,11,.07)',tension:.4}]
+    },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{...axBase.x},y:{...axBase.y}}}});
+  }
+
+  const betas = c.activos.map(a=>a.beta);
+  const rets = c.activos.map(a=>a.rendimiento_esperado_capm*100);
+  regCh('c-sml',{type:'scatter',data:{datasets:[
+    {label:'SML (Mercado)',data:[{x:0,y:c.rf_actual*100},{x:Math.max(...betas)*1.2,y:(c.rf_actual*100)+(Math.max(...betas)*1.2)*(c.rendimiento_mercado_anual*100-c.rf_actual*100)}],type:'line',borderColor:'rgba(148,163,184,.5)',borderWidth:1.5,pointRadius:0,borderDash:[5,3],fill:false},
+    {label:'Activos',data:c.activos.map((a,i)=>({x:a.beta,y:a.rendimiento_esperado_capm*100,n:a.ticker})),backgroundColor:CLRS.slice(0,betas.length),pointRadius:9,pointHoverRadius:11}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.n} β:${f2(c.raw.x)} Ret:${f1(c.raw.y)}%`}}},scales:{x:{...axBase.x,title:{display:true,text:'Beta (β)',color:tc}},y:{...axBase.y,title:{display:true,text:'Retorno ESP CAPM (%)',color:tc}}}}});
+}
+
+const f1=v=>v.toFixed(1);
+
+function renderOptim(){
+  if(!GLOBAL) return;
+  const el = document.getElementById('s-optim');
+  const f = GLOBAL.front;
+  const mv = f.portafolio_min_varianza;
+  const ms = f.portafolio_max_sharpe;
+  const crM = f.matriz_correlacion;
+  
+  el.innerHTML=`
+    <div class="g2">
+      <div class="card" style="border-color:#10b981;margin-bottom:0">
+        <div class="ct" style="color:#10b981">Portafolio Mínima Varianza ★</div>
+        <div style="font-size:13px;font-family:'SF Mono',monospace;color:#94a3b8;margin-bottom:12px">Vol <span style="color:#10b981;font-weight:600">${pct(mv.volatilidad_anual)}</span> &nbsp; Ret ${pctS(mv.rendimiento_anual)} &nbsp; Sharpe ${f2(mv.sharpe_ratio)}</div>
+        ${mv.tickers.map((t,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid #1e2435"><span style="color:#94a3b8">${t}</span><div style="display:flex;align-items:center;gap:7px"><div style="width:${mv.pesos[i]*100}px;height:4px;background:#10b981;border-radius:2px"></div><span style="font-family:'SF Mono',monospace;min-width:38px;text-align:right">${pct(mv.pesos[i])}</span></div></div>`).join('')}
+      </div>
+      <div class="card" style="border-color:#f59e0b;margin-bottom:0">
+        <div class="ct" style="color:#f59e0b">Portafolio Máximo Sharpe ★</div>
+        <div style="font-size:13px;font-family:'SF Mono',monospace;color:#94a3b8;margin-bottom:12px">Vol <span style="color:#f59e0b;font-weight:600">${pct(ms.volatilidad_anual)}</span> &nbsp; Ret ${pctS(ms.rendimiento_anual)} &nbsp; Sharpe ${f2(ms.sharpe_ratio)}</div>
+        ${ms.tickers.map((t,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid #1e2435"><span style="color:#94a3b8">${t}</span><div style="display:flex;align-items:center;gap:7px"><div style="width:${ms.pesos[i]*100}px;height:4px;background:#f59e0b;border-radius:2px"></div><span style="font-family:'SF Mono',monospace;min-width:38px;text-align:right">${pct(ms.pesos[i])}</span></div></div>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Frontera Eficiente — Simulación Montecarlo (${f.n_simulaciones} iteraciones)</div>
+      <div style="position:relative;height:290px"><canvas id="c-front"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Matriz de Correlación de Activos</div>
+      <div style="overflow-x:auto"><table class="ht" style="text-align:center">
+        <thead><tr><th></th>${f.tickers.map(t=>`<th style="text-align:center">${t}</th>`).join('')}</tr></thead>
+        <tbody>${f.tickers.map(ti=>`<tr><td style="text-align:left;font-weight:600">${ti}</td>
+          ${f.tickers.map(tj=>`<td style="font-family:'SF Mono',monospace;background:${crM[ti][tj]>=0?`rgba(59,130,246,${.12+crM[ti][tj]*.45})`:`rgba(239,68,68,${.12-crM[ti][tj]*.4})`};color:#e2e8f0">${crM[ti][tj].toFixed(2)}</td>`).join('')}
+        </tr>`).join('')}</tbody>
+      </table></div>
+    </div>`;
+
+  regCh('c-front',{type:'scatter',data:{datasets:[
+    {label:'Simulados',data:step(f.puntos_simulados).map(p=>({x:p.volatilidad*100,y:p.rendimiento*100})),backgroundColor:'rgba(99,102,241,.28)',pointRadius:4,pointHoverRadius:6},
+    {label:'Min Var',data:[{x:mv.volatilidad_anual*100,y:mv.rendimiento_anual*100}],backgroundColor:'#10b981',pointRadius:12,pointStyle:'star'},
+    {label:'Max Sharpe',data:[{x:ms.volatilidad_anual*100,y:ms.rendimiento_anual*100}],backgroundColor:'#f59e0b',pointRadius:12,pointStyle:'star'}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#94a3b8'}}},scales:{x:{...axBase.x,title:{display:true,text:'Volatilidad (%)',color:tc}},y:{...axBase.y,title:{display:true,text:'Retorno (%)',color:tc}}}}});
+}
+
+function renderSig(){
+  if(!GLOBAL) return;
+  const el = document.getElementById('s-sig');
+  const a = GLOBAL.alertas.alertas;
+  const m = GLOBAL.macro.indicadores_macro;
+  
+  el.innerHTML=`
+    <div class="g3">
+      ${m.map(im=>`<div class="mc"><div class="ml">${im.nombre}</div><div class="mv">${im.valor_actual}${im.unidad.replace('Porcentaje','%')}</div><div class="ms">FRED: ${im.serie_fred}</div></div>`).join('')}
+      ${m.length<3?`<div class="mc"><div class="ml">Tasa Libre R. (RF)</div><div class="mv">${pct(GLOBAL.capm.rf_actual)}</div><div class="ms">Actual</div></div>`:''}
+    </div>
+    <div class="card">
+      <div class="ct">Panel Automático de Señales Técnicas</div>
+      <div style="overflow-x:auto">
+        <div class="srow" style="min-width:460px">
+          <div class="srow-hdr">Activo</div><div class="srow-hdr">MACD</div><div class="srow-hdr">RSI</div><div class="srow-hdr">Bandas Bollinger</div><div class="srow-hdr">Señal Algorítmica</div>
+          ${a.map((al)=>`
+            <div class="srow-name">${al.ticker}</div>
+            <div class="srow-cell"><span class="sig ${sigCls(al.macd_senal)}">${al.macd_senal}</span></div>
+            <div class="srow-cell"><span class="sig ${sigCls(al.rsi_senal)}">${al.rsi_senal}</span><span style="font-size:10px;margin-left:4px">${f1(al.rsi_actual||0)}</span></div>
+            <div class="srow-cell"><span class="sig ${sigCls(al.bollinger_senal)}">${al.bollinger_senal}</span></div>
+            <div class="srow-cell"><span class="sig ${sigCls(al.senal_global)}" style="font-size:12px;font-weight:700;padding:4px 10px">${al.senal_global}</span></div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">RSI Últimos Períodos (Zonas Sobrecompra/Sobreventa)</div>
+      <div style="position:relative;height:240px"><canvas id="c-rsi"></canvas></div>
+    </div>`;
+
+  let rsiLen = 60;
+  regCh('c-rsi',{type:'line',data:{
+    labels:Array.from({length:rsiLen},(_,i)=>'-'+(59-i)),
+    datasets:[
+      ...GLOBAL.tickers.map((t,i)=>{
+        let data = GLOBAL.ind[i].indicadores.slice(-rsiLen).map(x=>x.rsi_14||50);
+        return {label:t,data,borderColor:CLRS[i%CLRS.length],borderWidth:1.5,pointRadius:0,tension:.3,fill:false};
+      }),
+      {label:'OB',data:Array(rsiLen).fill(70),borderColor:'rgba(248,113,113,.35)',borderDash:[4,3],pointRadius:0},
+      {label:'OS',data:Array(rsiLen).fill(30),borderColor:'rgba(52,211,153,.35)',borderDash:[4,3],pointRadius:0}
+    ]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:tc,boxWidth:10}}},scales:{x:{...axBase.x},y:{...axBase.y,min:15,max:85}}}});
+}
+
+function sw(name, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('act'));
+  btn.classList.add('act');
+  ['perf','risk','optim','sig'].forEach(n=>document.getElementById('s-'+n).style.display = n===name?'':'none');
+  ({perf:renderPerf, risk:renderRisk, optim:renderOptim, sig:renderSig}[name])();
+}
+
+// Iniciar cargando la pestaña performance si hay tickers
+if(document.getElementById('inp-tickers').value){
+    // Auto load on init removed, user must press analyse to prevent massive startup requests hanging
+}
+</script>
+</body>
+</html>

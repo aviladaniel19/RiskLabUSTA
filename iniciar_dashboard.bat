@@ -10,10 +10,12 @@ cd /d "%~dp0"
 echo Activando entorno virtual...
 call venv\Scripts\activate.bat
 
-echo Iniciando Streamlit...
+echo Iniciando Servidor Web FastAPI...
 echo.
-echo  El tablero se abrira en: http://localhost:8501
+echo  El tablero se abrira en: http://localhost:8000
 echo  Presiona Ctrl+C para detener el servidor.
 echo.
-streamlit run dashboard\app.py
+start http://localhost:8000
+cd backend
+uvicorn app.main:app --reload --port 8000
 pause

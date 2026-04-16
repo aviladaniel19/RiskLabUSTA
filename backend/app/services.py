@@ -444,7 +444,7 @@ class RiskService:
         ret = rendimientos_log(precios)
         rf = obtener_rf_actual()
 
-        resultados = simular_portafolios(ret, n_simulaciones=n_simulaciones, rf=rf)
+        resultados = simular_portafolios(ret, n_portafolios=n_simulaciones, rf=rf)
         # portafolio_minima_varianza y portafolio_max_sharpe trabajan sobre ret directamente
         opt_mv_dict = portafolio_minima_varianza(ret, rf=rf)
         opt_ms_dict = portafolio_max_sharpe(ret, rf=rf)

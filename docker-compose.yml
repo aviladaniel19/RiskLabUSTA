@@ -11,8 +11,9 @@
 #
 # ACCESOS:
 #   Backend API:  http://localhost:8000
-#   Swagger /docs: http://localhost:8000/docs
-#   Dashboard:    http://localhost:8501
+# ACCESOS:
+#   Backend y Dashboard: http://localhost:8000
+#   Swagger /docs:       http://localhost:8000/docs
 # =====================================================================
 
 version: "3.9"
@@ -46,31 +47,7 @@ services:
       retries: 3
       start_period: 40s
 
-  # ══════════════════════════════════════════════
-  # SERVICIO 2: Frontend Streamlit
-  # ══════════════════════════════════════════════
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: risklab_frontend
-    ports:
-      - "8501:8501"
-    environment:
-      # BACKEND_URL usa el NOMBRE DEL SERVICIO (no localhost).
-      # Docker resuelve "backend" como la IP del contenedor backend
-      # dentro de la red interna risklab-net (DNS interno de Docker).
-      # Desde tu PC usas localhost:8000; dentro de Docker es backend:8000.
-      - BACKEND_URL=http://backend:8000
-    volumes:
-      - ./frontend:/app
-      - /app/__pycache__
-    depends_on:
-      backend:
-        condition: service_healthy  # Espera que el backend responda /
-    networks:
-      - risklab-net
-    restart: unless-stopped
+
 
 # ══════════════════════════════════════════════
 # RED INTERNA
