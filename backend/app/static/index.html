@@ -1,195 +1,655 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RiskLab USTA — Dashboard de Riesgo</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh}
-.shell{max-width:1280px;margin:0 auto;padding:1.5rem}
-.header{display:flex;flex-direction:column;gap:1rem;padding-bottom:1.25rem;border-bottom:1px solid #1e2435;margin-bottom:1.5rem}
-.header-top{display:flex;justify-content:space-between;align-items:flex-end}
-.header-left h1{font-size:18px;font-weight:600;color:#f1f5f9;letter-spacing:.02em}
-.header-left p{font-size:12px;color:#64748b;margin-top:3px}
-.ts{font-size:11px;font-family:'SF Mono','Fira Code',monospace;color:#475569;text-align:right}
-.form-panel{background:#161b26;border:1px solid #1e2435;border-radius:10px;padding:1rem;display:flex;gap:15px;align-items:flex-end}
-.form-grp{display:flex;flex-direction:column;gap:5px}
-.form-grp label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.06em}
-.form-input{padding:8px;background:#0f1117;border:1px solid #1e2435;color:#e2e8f0;border-radius:6px;font-size:13px;font-family:'SF Mono',monospace}
-.btn-analizar{padding:9px 18px;background:#10b981;color:#0f1117;border:none;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;transition:opacity .15s}
-.btn-analizar:hover{opacity:.8}
-.btn-analizar:disabled{background:#475569;cursor:not-allowed}
-.tabs{display:flex;gap:0;border-bottom:1px solid #1e2435;margin-bottom:1.5rem}
-.tab{padding:9px 18px;font-size:13px;background:transparent;border:0;border-bottom:2px solid transparent;color:#64748b;cursor:pointer;transition:all .15s;letter-spacing:.01em}
-.tab:hover{color:#94a3b8;background:rgba(255,255,255,.03)}
-.tab.act{color:#e2e8f0;border-bottom-color:#3b82f6;font-weight:500}
-.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.25rem}
-.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:1.25rem}
-.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:1.25rem}
-.mc{background:transparent;border:1px solid #10b981;border-radius:10px;padding:1rem;color:#10b981}
-.ml{font-size:11px;color:#10b981;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
-.mv{font-size:22px;font-weight:600;font-family:'SF Mono','Fira Code',monospace;color:#10b981}
-.ms{font-size:11px;color:#10b981;margin-top:3px;opacity:.7}
-.card{background:#161b26;border:1px solid #1e2435;border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:1.25rem}
-.ct{font-size:11px;font-weight:500;color:#64748b;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
-.ht{width:100%;border-collapse:collapse}
-.ht th,.ht td{padding:8px 12px;font-size:12px;text-align:right;border-bottom:1px solid #1e2435}
-.ht th{color:#64748b;font-weight:500;text-align:left}
-.ht td:first-child{text-align:left;font-weight:500;color:#e2e8f0}
-.ht tr:last-child td{border-bottom:0}
-.sig{display:inline-flex;align-items:center;font-size:11px;padding:3px 9px;border-radius:5px;font-weight:600;letter-spacing:.03em}
-.sb{background:rgba(16,185,129,.15);color:#34d399}
-.ss{background:rgba(239,68,68,.15);color:#f87171}
-.sn{background:rgba(100,116,139,.12);color:#94a3b8}
-.srow{display:grid;grid-template-columns:88px repeat(4,1fr);gap:6px;align-items:center}
-.srow-cell{text-align:center;padding:9px 4px;border-top:1px solid #1e2435}
-.srow-name{font-size:13px;font-weight:600;padding:9px 4px;border-top:1px solid #1e2435;color:#e2e8f0}
-.srow-hdr{font-size:11px;font-weight:500;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.06em;padding-bottom:8px}
-.srow-hdr:first-child{text-align:left}
-.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;font-family:'SF Mono','Fira Code',monospace}
-.bar-track{height:5px;background:#1e2435;border-radius:3px;flex:1}
-.bar-fill{height:5px;border-radius:3px}
-@media(max-width:700px){.g4,.g3{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RiskLab USTA — Dashboard de Riesgo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh
+    }
+
+    .shell {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem
+    }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid #1e2435;
+      margin-bottom: 1.5rem
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end
+    }
+
+    .header-left h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #f1f5f9;
+      letter-spacing: .02em
+    }
+
+    .header-left p {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 3px
+    }
+
+    .ts {
+      font-size: 11px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: #475569;
+      text-align: right
+    }
+
+    .form-panel {
+      background: #161b26;
+      border: 1px solid #1e2435;
+      border-radius: 10px;
+      padding: 1rem;
+      display: flex;
+      gap: 15px;
+      align-items: flex-end
+    }
+
+    .form-grp {
+      display: flex;
+      flex-direction: column;
+      gap: 5px
+    }
+
+    .form-grp label {
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: .06em
+    }
+
+    .form-input {
+      padding: 8px;
+      background: #0f1117;
+      border: 1px solid #1e2435;
+      color: #e2e8f0;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: 'SF Mono', monospace
+    }
+
+    .btn-analizar {
+      padding: 9px 18px;
+      background: #10b981;
+      color: #0f1117;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: opacity .15s
+    }
+
+    .btn-analizar:hover {
+      opacity: .8
+    }
+
+    .btn-analizar:disabled {
+      background: #475569;
+      cursor: not-allowed
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #1e2435;
+      margin-bottom: 1.5rem
+    }
+
+    .tab {
+      padding: 9px 18px;
+      font-size: 13px;
+      background: transparent;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      color: #64748b;
+      cursor: pointer;
+      transition: all .15s;
+      letter-spacing: .01em
+    }
+
+    .tab:hover {
+      color: #94a3b8;
+      background: rgba(255, 255, 255, .03)
+    }
+
+    .tab.act {
+      color: #e2e8f0;
+      border-bottom-color: #3b82f6;
+      font-weight: 500
+    }
+
+    .g4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 1.25rem
+    }
+
+    .g3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 1.25rem
+    }
+
+    .g2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 1.25rem
+    }
+
+    .mc {
+      background: transparent;
+      border: 1px solid #10b981;
+      border-radius: 10px;
+      padding: 1rem;
+      color: #10b981
+    }
+
+    .ml {
+      font-size: 11px;
+      color: #10b981;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      opacity: .8
+    }
+
+    .mv {
+      font-size: 22px;
+      font-weight: 600;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: #10b981
+    }
+
+    .ms {
+      font-size: 11px;
+      color: #10b981;
+      margin-top: 3px;
+      opacity: .7
+    }
+
+    .card {
+      background: #161b26;
+      border: 1px solid #1e2435;
+      border-radius: 12px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1.25rem
+    }
+
+    .ct {
+      font-size: 11px;
+      font-weight: 500;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: 14px
+    }
+
+    .ht {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    .ht th,
+    .ht td {
+      padding: 8px 12px;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .mc:nth-child(n+2) {
+      border-color: #3b82f6;
+      color: #3b82f6
+    }
+
+    .mc:nth-child(n+2) .ml,
+    .mc:nth-child(n+2) .ms {
+      color: #3b82f6
+    }
+
+    .mc:nth-child(3) {
+      border-color: #f59e0b;
+      color: #f59e0b
+    }
+
+    .mc:nth-child(3) .ml,
+    .mc:nth-child(3) .ms {
+      color: #f59e0b
+    }
+
+    /* Estilos para Composición Manual */
+    .act-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .act-card {
+      background: #0f1117;
+      border: 1px solid #1e2435;
+      border-radius: 12px;
+      padding: 12px;
+      transition: border-color .2s;
+    }
+
+    .act-card:focus-within {
+      border-color: #3b82f6;
+    }
+
+    .w-input {
+      background: #1e2435;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #f1f5f9;
+      font-family: 'SF Mono', monospace;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 6px 8px;
+      width: 100%;
+      text-align: right;
+      outline: none;
+    }
+
+    .w-input:focus {
+      border-color: #3b82f6;
+      background: #242b3d;
+    }
+
+    .sum-bar-container {
+      background: #1e2435;
+      border-radius: 20px;
+      height: 8px;
+      width: 100%;
+      overflow: hidden;
+      margin: 15px 0;
+    }
+
+    .sum-bar-fill {
+      height: 100%;
+      transition: width .3s, background-color .3s;
+    }
+
+    .btn-apply {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .btn-apply:hover {
+      background: #2563eb
+    }
+
+    .btn-apply:disabled {
+      background: #1e2435;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    .ht th {
+      color: #64748b;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .ht td:first-child {
+      text-align: center;
+      font-weight: 500;
+      color: #e2e8f0
+    }
+
+    .ht tr:last-child td {
+      border-bottom: 0
+    }
+
+    .sig {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-weight: 600;
+      letter-spacing: .03em
+    }
+
+    .sb {
+      background: rgba(16, 185, 129, .15);
+      color: #34d399
+    }
+
+    .ss {
+      background: rgba(239, 68, 68, .15);
+      color: #f87171
+    }
+
+    .sn {
+      background: rgba(100, 116, 139, .12);
+      color: #94a3b8
+    }
+
+    .srow {
+      display: grid;
+      grid-template-columns: 88px repeat(4, 1fr);
+      gap: 6px;
+      align-items: center
+    }
+
+    .srow-cell {
+      text-align: center;
+      padding: 9px 4px;
+      border-top: 1px solid #1e2435
+    }
+
+    .srow-name {
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 4px;
+      border-top: 1px solid #1e2435;
+      color: #e2e8f0
+    }
+
+    .srow-hdr {
+      font-size: 11px;
+      font-weight: 500;
+      color: #64748b;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding-bottom: 8px
+    }
+
+    .srow-hdr:first-child {
+      text-align: left
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'SF Mono', 'Fira Code', monospace
+    }
+
+    .bar-track {
+      height: 5px;
+      background: #1e2435;
+      border-radius: 3px;
+      flex: 1
+    }
+
+    .bar-fill {
+      height: 5px;
+      border-radius: 3px
+    }
+
+    .sel-dd {
+      padding: 6px 10px;
+      background: #0f1117;
+      border: 1px solid #1e2435;
+      color: #e2e8f0;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: 'SF Mono', monospace;
+      margin-bottom: 10px
+    }
+
+    @media(max-width:700px) {
+
+      .g4,
+      .g3 {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .g2 {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="shell">
-  <div class="header">
-    <div class="header-top">
-      <div class="header-left">
-        <h1>RiskLab USTA</h1>
-        <p>Tablero Interactivo de Riesgo Financiero &nbsp;·&nbsp; Prof. Javier Mauricio Sierra</p>
+  <div class="shell">
+    <div class="header">
+      <div class="header-top">
+        <div class="header-left">
+          <h1>RiskLab USTA</h1>
+          <p>Dashboard Interactivo de Riesgo Financiero &nbsp;·&nbsp; Daniel Avila Otalora - Jhon Alexander Ocampo Gómez
+          </p>
+        </div>
+        <div class="ts" id="ts">Esperando datos...</div>
       </div>
-      <div class="ts" id="ts">Esperando datos...</div>
+      <div class="form-panel">
+        <div class="form-grp" style="flex:2">
+          <label>Tickers (separados por coma)</label>
+          <input type="text" id="inp-tickers" class="form-input" value="AAPL, MSFT, GOOGL, AMZN, TSLA">
+        </div>
+        <div class="form-grp" style="flex:1">
+          <label>Benchmark</label>
+          <select id="inp-bench" class="form-input" style="font-family:inherit">
+            <option value="^GSPC">S&P 500 (^GSPC)</option>
+            <option value="^DJI">Dow Jones (^DJI)</option>
+            <option value="^IXIC">NASDAQ (^IXIC)</option>
+          </select>
+        </div>
+        <div class="form-grp" style="flex:1">
+          <label>Período</label>
+          <select id="inp-per" class="form-input" style="font-family:inherit">
+            <option value="1y">1 Año</option>
+            <option value="2y" selected>2 Años</option>
+            <option value="5y">5 Años</option>
+          </select>
+        </div>
+        <div class="form-grp">
+          <button id="btn-analizar" class="btn-analizar" onclick="loadData()">Analizar</button>
+        </div>
+      </div>
     </div>
-    <div class="form-panel">
-      <div class="form-grp" style="flex:2">
-        <label>Tickers (separados por coma)</label>
-        <input type="text" id="inp-tickers" class="form-input" value="AAPL, MSFT, GOOGL, AMZN, TSLA">
-      </div>
-      <div class="form-grp" style="flex:1">
-        <label>Benchmark</label>
-        <select id="inp-bench" class="form-input" style="font-family: inherit">
-          <option value="^GSPC">S&P 500 (^GSPC)</option>
-          <option value="^DJI">Dow Jones (^DJI)</option>
-          <option value="^IXIC">NASDAQ (^IXIC)</option>
-        </select>
-      </div>
-      <div class="form-grp" style="flex:1">
-        <label>Período</label>
-        <select id="inp-per" class="form-input" style="font-family: inherit">
-          <option value="1y">1 Año</option>
-          <option value="2y" selected>2 Años</option>
-          <option value="5y">5 Años</option>
-        </select>
-      </div>
-      <div class="form-grp">
-        <button id="btn-analizar" class="btn-analizar" onclick="loadData()">Analizar</button>
-      </div>
+
+    <div class="tabs">
+      <button class="tab act" onclick="sw('perf',this)">A. Rendimiento</button>
+      <button class="tab" onclick="sw('sig',this)">B. Señales</button>
+      <button class="tab" onclick="sw('risk',this)">C. Riesgo</button>
+      <button class="tab" onclick="sw('vol',this)">D. Volatilidad</button>
+      <button class="tab" onclick="sw('optim',this)">E. Optimización</button>
     </div>
+
+    <div id="s-perf"></div>
+    <div id="s-sig" style="display:none"></div>
+    <div id="s-risk" style="display:none"></div>
+    <div id="s-vol" style="display:none"></div>
+    <div id="s-optim" style="display:none"></div>
   </div>
 
-  <div class="tabs">
-    <button class="tab act" onclick="sw('perf',this)">A. Rendimiento</button>
-    <button class="tab" onclick="sw('risk',this)">B. Riesgo</button>
-    <button class="tab" onclick="sw('optim',this)">C. Optimización</button>
-    <button class="tab" onclick="sw('sig',this)">D. Señales</button>
-  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script>
+    /* ── GLOBAL STATE ─────────────────────────────────── */
+    let GLOBAL = null;
+    let charts = {};
 
-  <div id="s-perf"></div>
-  <div id="s-risk" style="display:none"></div>
-  <div id="s-optim" style="display:none"></div>
-  <div id="s-sig" style="display:none"></div>
-</div>
+    /* ── UTILS ────────────────────────────────────────── */
+    const pct = (v, d = 2) => (v * 100).toFixed(d) + '%';
+    const pctS = (v, d = 2) => (v >= 0 ? '+' : '') + pct(v, d);
+    const f1 = v => v.toFixed(1), f2 = v => v.toFixed(2), f3 = v => v.toFixed(3);
+    const tc = '#64748b', gc = 'rgba(255,255,255,.05)';
+    const axBase = { grid: { color: gc }, ticks: { color: tc, font: { size: 11 } } };
+    const CLRS = ['#3b82f6', '#10b981', '#f59e0b', '#a78bfa', '#f87171', '#ec4899', '#14b8a6', '#8b5cf6'];
+    const sigCls = s => s.includes('COMPRA') ? 'sb' : s.includes('VENDE') ? 'ss' : 'sn';
+    function regCh(id, c) { if (charts[id]) charts[id].destroy(); charts[id] = new Chart(id, c) }
+    const step = a => { const s = Math.ceil(a.length / 120); return a.filter((_, i) => i % s === 0) };
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script>
-/* ── GLOBAL STATE ────────────────────────────────────────────── */
-let GLOBAL = null;
-let charts = {};
+    /* Escala de colores: Naranja (bajo Sharpe) -> Verde (alto Sharpe) */
+    function sharpeColor(sr, minSr, maxSr) {
+      let t = maxSr === minSr ? 0.5 : (sr - minSr) / (maxSr - minSr);
+      t = Math.max(0, Math.min(1, t));
+      // Naranja (#f97316) -> Verde (#10b981)
+      let r = Math.round(249 + t * (16 - 249));
+      let g = Math.round(115 + t * (185 - 115));
+      let b = Math.round(22 + t * (129 - 22));
+      return `rgba(${r},${g},${b},0.7)`;
+    }
 
-/* ── UTILS ───────────────────────────────────────────────────── */
-const pct=(v,d=2)=>(v*100).toFixed(d)+'%';
-const pctS=(v,d=2)=>(v>=0?'+':'')+pct(v,d);
-const f2=v=>v.toFixed(2), f3=v=>v.toFixed(3);
-const clr=v=>v>=0?`rgba(59,130,246,${.12+v*.45})`:`rgba(239,68,68,${.12-v*.4})`;
-const tc='#64748b', gc='rgba(255,255,255,.05)';
-const axBase={grid:{color:gc},ticks:{color:tc,font:{size:11}}};
-const CLRS=['#3b82f6','#10b981','#f59e0b','#a78bfa','#f87171','#ec4899','#14b8a6','#8b5cf6'];
-const sigCls=s=>s.includes('COMPRA')?'sb':s.includes('VENDE')?'ss':'sn';
-function regCh(id, c){ if(charts[id]) charts[id].destroy(); charts[id]=new Chart(id,c); }
-const step=a=>{const s=Math.ceil(a.length/120);return a.filter((_,i)=>i%s===0)};
+    /* ── API CALLS ────────────────────────────────────── */
+    async function api(path, p = {}, method = 'GET', body = null) {
+      let url = new URL(path, window.location.origin);
+      Object.keys(p).forEach(k => url.searchParams.append(k, p[k]));
+      let opt = { method, headers: { 'Content-Type': 'application/json' } };
+      if (body) opt.body = JSON.stringify(body);
+      let res = await fetch(url, opt);
+      if (!res.ok) throw new Error(`API ${res.status}: ` + (await res.text()).slice(0, 200));
+      return await res.json();
+    }
 
-/* ── API CALLS ───────────────────────────────────────────────── */
-async function api(path, p={}, method='GET', body=null) {
-  let url = new URL(path, window.location.origin);
-  Object.keys(p).forEach(k => url.searchParams.append(k, p[k]));
-  let opt = { method, headers: {'Content-Type': 'application/json'} };
-  if(body) opt.body = JSON.stringify(body);
-  let res = await fetch(url, opt);
-  if(!res.ok) throw new Error(`Error API (${res.status}): ` + await res.text());
-  return await res.json();
-}
+    async function loadData() {
+      const btn = document.getElementById('btn-analizar');
+      const ts = document.getElementById('ts');
+      btn.innerText = "Calculando..."; btn.disabled = true;
+      ts.innerHTML = "Preparando consulta...";
+      try {
+        const rawT = document.getElementById('inp-tickers').value.split(',').map(s => s.trim().toUpperCase()).filter(s => s);
+        if (rawT.length < 2) throw new Error("Mínimo 2 tickers requeridos");
+        const per = document.getElementById('inp-per').value;
+        let w = rawT.map(() => parseFloat((1.0 / rawT.length).toFixed(4)));
+        w[0] += (1.0 - w.reduce((a, b) => a + b, 0));
 
-async function loadData() {
-  const btn = document.getElementById('btn-analizar');
-  const ts = document.getElementById('ts');
-  btn.innerText = "Calculando..."; btn.disabled = true;
-  ts.innerHTML = "Llamando al motor FastAPI...";
-  
-  try {
-    const rawT = document.getElementById('inp-tickers').value.split(',').map(s=>s.trim().toUpperCase()).filter(s=>s);
-    if(rawT.length<2) throw new Error("Mínimo 2 tickers requeridos");
-    const bench = document.getElementById('inp-bench').value;
-    const per = document.getElementById('inp-per').value;
-    
-    // Pesos equitativos (asegurar que sumen 1.0 exacto)
-    let w = rawT.map(()=>parseFloat((1.0/rawT.length).toFixed(4)));
-    w[0] += (1.0 - w.reduce((a,b)=>a+b,0)); 
+        // Fase 1: Endpoints de portafolio (secuenciales para no saturar Yahoo Finance)
+        ts.innerHTML = "[1/4] Calculando CAPM y rendimiento vs benchmark...";
+        const capm = await api('/capm', { tickers: rawT.join(','), periodo: per });
 
-    // Paralelizamos las llamadas intensivas
-    let pCapm = api('/capm', {tickers: rawT.join(','), periodo: per});
-    let pMacro = api('/macro', {tickers: rawT.join(','), pesos: w.join(','), periodo: per});
-    let pAlert = api('/alertas', {tickers: rawT.join(','), periodo: per});
-    let pVar = api('/var', {}, 'POST', {tickers:rawT, pesos:w, nivel_confianza:0.95, periodo:per});
-    let pFront = api('/frontera-eficiente', {}, 'POST', {tickers:rawT, pesos:w, nivel_confianza:0.95, periodo:per});
-    
-    const [capm, macro, alertas, varData, front] = await Promise.all([pCapm, pMacro, pAlert, pVar, pFront]);
-    
-    let pRends = Promise.all(rawT.map(t=>api(`/rendimientos/${t}`, {periodo:per})));
-    let pInds = Promise.all(rawT.map(t=>api(`/indicadores/${t}`, {periodo:per})));
-    let pPx = Promise.all(rawT.map(t=>api(`/precios/${t}`, {periodo:per})));
-    let pGarch = api(`/garch/${rawT[0]}`, {periodo:per}).catch(()=>null);
-    let pSpx = api(`/precios/SPY`, {periodo:per}); // proxy robusto para spx data base
-    
-    GLOBAL = { tickers:rawT, pesos:w, capm, macro, alertas, varData, front, 
-               rends: await pRends, ind: await pInds, precios: await pPx, 
-               garch: await pGarch, spx: await pSpx };
-               
-    ts.innerHTML = `<span style="color:#10b981">●</span> Sincronizado &nbsp;·&nbsp; ${new Date().toLocaleTimeString('es-CO')}`;
-    
-    // Forzar re-render de la pestaña actual
-    let act = document.querySelector('.tab.act');
-    if(act) sw(act.getAttribute('onclick').match(/'([^']+)'/)[1], act);
+        ts.innerHTML = "[2/4] Calculando VaR, CVaR y frontera eficiente...";
+        const macro = await api('/macro', { tickers: rawT.join(','), pesos: w.join(','), periodo: per });
+        const varData = await api('/var', {}, 'POST', { tickers: rawT, pesos: w, nivel_confianza: 0.95, periodo: per });
+        const front = await api('/frontera-eficiente', {}, 'POST', { tickers: rawT, pesos: w, nivel_confianza: 0.95, periodo: per });
 
-  } catch(err) {
-    console.error(err);
-    ts.innerHTML = `<span style="color:#f87171">Error: ${err.message}</span>`;
-  } finally {
-    btn.innerText = "Analizar"; btn.disabled = false;
-  }
-}
+        // Fase 2: Endpoints individuales por ticker (secuenciales)
+        ts.innerHTML = "[3/4] Descargando precios, rendimientos e indicadores...";
+        let rends = [], ind = [], precios = [];
+        for (let i = 0; i < rawT.length; i++) {
+          ts.innerHTML = `[3/4] Procesando ${rawT[i]} (${i + 1}/${rawT.length})...`;
+          rends.push(await api(`/rendimientos/${rawT[i]}`, { periodo: per }));
+          ind.push(await api(`/indicadores/${rawT[i]}`, { periodo: per }));
+          precios.push(await api(`/precios/${rawT[i]}`, { periodo: per }));
+        }
 
-/* ── TAB RENDERING ───────────────────────────────────────────── */
+        // Fase 3: Alertas + GARCH (opcional)
+        ts.innerHTML = "[4/4] Generando señales técnicas...";
+        const alertas = await api('/alertas', { tickers: rawT.join(','), periodo: per });
+        let garch = null;
+        try { garch = await api(`/garch/${rawT[0]}`, { periodo: per }) } catch (e) { console.warn('GARCH:', e.message); }
 
-function renderPerf(){
-  if(!GLOBAL) return;
-  const el = document.getElementById('s-perf');
-  const m = GLOBAL.macro; const c = GLOBAL.capm;
-  const pd = m.desempeno_portafolio; const bd = m.desempeno_benchmark;
-  
-  el.innerHTML=`
+        GLOBAL = { tickers: rawT, pesos: w, capm, macro, alertas, varData, front, rends, ind, precios, garch, volData: {} };
+        ts.innerHTML = `<span style="color:#10b981">●</span> Sincronizado &nbsp;·&nbsp; ${new Date().toLocaleTimeString('es-CO')}`;
+        let act = document.querySelector('.tab.act');
+        if (act) sw(act.getAttribute('onclick').match(/'([^']+)'/)[1], act);
+      } catch (err) {
+        console.error(err);
+        ts.innerHTML = `<span style="color:#f87171">Error: ${err.message}</span>`;
+      } finally {
+        btn.innerText = "Analizar"; btn.disabled = false;
+      }
+    }
+
+    function validarPesos() {
+      const inputs = document.querySelectorAll('.w-input');
+      let total = 0;
+      inputs.forEach(i => total += (parseFloat(i.value) || 0));
+
+      const valEl = document.getElementById('sum-val');
+      const barEl = document.getElementById('sum-bar');
+      const btnEl = document.getElementById('btn-aplicar');
+
+      if (valEl) valEl.innerText = total.toFixed(1);
+      if (barEl) {
+        barEl.style.width = Math.min(total, 100) + '%';
+        barEl.style.backgroundColor = total > 100.1 ? '#ef4444' : (total > 99.9 ? '#10b981' : '#3b82f6');
+      }
+      if (btnEl) btnEl.disabled = total > 100.1;
+    }
+
+    async function aplicarPesos() {
+      const inputs = document.querySelectorAll('.w-input');
+      let vals = Array.from(inputs).map(i => parseFloat(i.value) || 0);
+      let total = vals.reduce((a, b) => a + b, 0);
+
+      // Auto-completar/Normalizar si es necesario
+      if (total > 0 && total < 100) {
+        vals = vals.map(v => (v / total));
+      } else {
+        vals = vals.map(v => v / 100);
+      }
+
+      GLOBAL.pesos = vals;
+      const ts = document.getElementById('ts');
+      ts.style.display = 'block';
+      ts.innerText = "Recalculando métricas con nuevos pesos...";
+
+      try {
+        const tickers = GLOBAL.tickers.join(',');
+        const per = document.getElementById('inp-per').value;
+        const pesosStr = vals.map(v => v.toFixed(4)).join(',');
+
+        // Solo recalculamos los que dependen de los pesos
+        const [macro, varData, front] = await Promise.all([
+          api('/macro', { tickers, pesos: pesosStr, periodo: per }),
+          api('/var', { tickers, pesos: pesosStr, periodo: per }),
+          api('/frontera-eficiente', { tickers, n_sim: 500, periodo: per })
+        ]);
+
+        GLOBAL.macro = macro;
+        GLOBAL.varData = varData;
+        GLOBAL.front = front;
+
+        // Limpiar caché de volatilidad ya que el portafolio cambió (opcional, pero mejor refrescar vistas)
+        renderPerf();
+        renderRisk();
+        renderOptim();
+        ts.style.display = 'none';
+      } catch (e) {
+        ts.innerText = "Error recalculando: " + e.message;
+        setTimeout(() => ts.style.display = 'none', 3000);
+      }
+    }
+
+    /* ══ A. RENDIMIENTO ═══════════════════════════════════ */
+    function renderPerf() {
+      if (!GLOBAL) return;
+      const el = document.getElementById('s-perf');
+      const m = GLOBAL.macro, c = GLOBAL.capm;
+      const pd = m.desempeno_portafolio, bd = m.desempeno_benchmark;
+
+      el.innerHTML = `
     <div class="g4">
       <div class="mc"><div class="ml">Retorno portafolio</div><div class="mv">${pctS(pd.rendimiento_anualizado)}</div><div class="ms">benchmark: ${pctS(bd.rendimiento_anualizado)}</div></div>
       <div class="mc"><div class="ml">Ratio de Sharpe</div><div class="mv">${f3(pd.sharpe_ratio)}</div><div class="ms">benchmark: ${f3(bd.sharpe_ratio)}</div></div>
@@ -197,158 +657,541 @@ function renderPerf(){
       <div class="mc"><div class="ml">Alpha de Jensen</div><div class="mv">${pctS(m.alpha_jensen)}</div><div class="ms">exceso anual vs CAPM</div></div>
     </div>
     <div class="card">
-      <div class="ct">Composición y perfil del portafolio construido equitativamente</div>
-      <div style="padding:4px 0">
-        ${GLOBAL.tickers.map((t,i)=>`
-          <div style="padding:7px 0;border-bottom:1px solid #1e2435">
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px">
-              <span style="font-size:13px;font-weight:600;color:${CLRS[i%CLRS.length]}">${t}</span>
-              <span style="font-size:12px;font-family:'SF Mono',monospace;color:#94a3b8">${pct(GLOBAL.pesos[i],0)} &nbsp;β ${f2(c.activos.find(x=>x.ticker===t)?.beta||1)}</span>
-            </div>
-            <div class="bar-track"><div class="bar-fill" style="width:${GLOBAL.pesos[i]*600}px;max-width:100%;background:${CLRS[i%CLRS.length]};opacity:.7"></div></div>
-          </div>`).join('')}
-        <div style="display:flex;justify-content:space-between;padding-top:10px;font-size:11px;color:#64748b">
-          <span>Volatilidad anual portafolio: <span style="font-family:'SF Mono',monospace;color:#94a3b8">${pct(pd.volatilidad_anualizada)}</span></span>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="ct" style="margin-bottom:0">Serie de Precios y Medias Móviles</div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <select class="sel-dd" id="dd-sma" onchange="drawPriceChart()" style="width:100px;font-size:11px">
+            <option value="0">Sin SMA</option>
+            <option value="20" selected>SMA 20 (Corto)</option>
+            <option value="50">SMA 50 (Medio)</option>
+            <option value="200">SMA 200 (Largo)</option>
+          </select>
+          <select class="sel-dd" id="dd-ema" onchange="drawPriceChart()" style="width:100px;font-size:11px">
+            <option value="0">Sin EMA</option>
+            <option value="20">EMA 20 (Corto)</option>
+            <option value="50" selected>EMA 50 (Medio)</option>
+            <option value="200">EMA 200 (Largo)</option>
+          </select>
+          <select class="sel-dd" id="dd-price" onchange="drawPriceChart()" style="width:120px">
+            ${GLOBAL.tickers.map((t, i) => `<option value="${i}">${t}</option>`).join('')}
+          </select>
         </div>
       </div>
+      <div style="position:relative;height:280px"><canvas id="c-price"></canvas></div>
     </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
+        <div class="ct" style="margin-bottom:0">Composición y Perfil del Portafolio</div>
+        <div id="sum-badge" style="background:#1e2435;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;color:#94a3b8">Total: <span id="sum-val">--</span>%</div>
+      </div>
+      
+      <div class="act-grid">
+        ${GLOBAL.tickers.map((t, i) => {
+        const beta = c.activos.find(x => x.ticker === t)?.beta || 1;
+        const pesoPct = (GLOBAL.pesos[i] * 100).toFixed(1);
+        return `
+          <div class="act-card">
+            <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+              <span style="font-weight:700;color:${CLRS[i % CLRS.length]}">${t}</span>
+              <span style="font-size:11px;color:#64748b;font-family:'SF Mono',monospace">β ${f2(beta)}</span>
+            </div>
+            <div style="position:relative">
+              <input type="number" class="w-input" data-idx="${i}" value="${pesoPct}" min="0" max="100" step="0.1" oninput="validarPesos()">
+              <span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:12px;color:#64748b">%</span>
+            </div>
+          </div>`;
+      }).join('')}
+      </div>
+
+      <div class="sum-bar-container">
+        <div id="sum-bar" class="sum-bar-fill" style="width:0%;background:#3b82f6"></div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:11px;color:#64748b;line-height:1.4">
+          * Los pesos se re-normalizarán proporcionalmente al 100% si la suma es menor.<br>
+          * Volatilidad anual portafolio: <span style="font-family:'SF Mono',monospace;color:#94a3b8">${pct(pd.volatilidad_anualizada)}</span>
+        </div>
+        <button id="btn-aplicar" class="btn-apply" onclick="aplicarPesos()">Aplicar Composición</button>
+      </div>
+    </div>
+      <div class="g2">
+        <div class="card">
+          <div class="ct">Gráfico Q-Q (Teórico vs. Empírico)</div>
+          <div style="position:relative;height:240px"><canvas id="c-qq"></canvas></div>
+          <div style="font-size:11px;color:#64748b;margin-top:10px">
+            Si los puntos siguen la línea diagonal, el activo es <strong>Normal</strong>. 
+            Desviaciones en los extremos indican <strong>colas pesadas</strong>.
+          </div>
+        </div>
+        <div class="card">
+          <div class="ct">Distribución y Outliers (Boxplot)</div>
+          <div id="box-cont" style="position:relative;height:320px;width:100%;overflow-x:auto;">
+             <!-- El SVG dinámico se inyectará aquí -->
+          </div>
+          <div style="font-size:11px;color:#64748b;margin-top:10px;line-height:1.4;border-top:1px solid #1e293b;padding-top:10px">
+             <strong>Interpretación:</strong> Este gráfico combina un <em>Boxplot</em> con un <em>Stripplot</em> (puntos). La caja representa el 50% central de los rendimientos. La línea blanca es la <strong>Mediana</strong>. Los puntos dispersos muestran la densidad de los rendimientos diarios; cajas altas con puntos muy esparcidos indican <strong>mayor volatilidad y riesgo extremo</strong>.
+          </div>
+          <div style="font-size:10px;color:#475569;margin-top:5px;text-align:right;font-style:italic">
+             Fuente: Yahoo Finance (Datos Históricos Ajustados)
+          </div>
+        </div>
+      </div>
+
     <div class="card">
       <div class="ct">Retorno vs Riesgo por Activo</div>
       <div style="position:relative;height:220px"><canvas id="c-rr"></canvas></div>
     </div>`;
 
-    let rrD = GLOBAL.rends.map((r,i)=>({
-        x: r.estadisticas.volatilidad_anualizada*100, 
-        y: r.estadisticas.media_anualizada*100, 
-        n: r.ticker 
-    }));
-    regCh('c-rr',{type:'scatter',data:{datasets:[{data:rrD,backgroundColor:CLRS.slice(0,rrD.length),pointRadius:9,pointHoverRadius:11}]},
-        options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const d=rrD[ctx.dataIndex];return `${d.n}  σ:${f1(d.x)}%  μ:${f1(d.y)}%`}}}},
-        scales:{x:{...axBase.x,title:{display:true,text:'Volatilidad anual (%)',color:tc,font:{size:11}}},
-                y:{...axBase.y,title:{display:true,text:'Retorno anual (%)',color:tc,font:{size:11}}}}}});
-}
+      drawPriceChart();
+      validarPesos();
 
-function renderRisk(){
-  if(!GLOBAL) return;
-  const el = document.getElementById('s-risk');
-  const pd = GLOBAL.macro.desempeno_portafolio;
-  const bd = GLOBAL.macro.desempeno_benchmark;
-  const v = GLOBAL.varData;
-  const c = GLOBAL.capm;
-  const betaPort = c.activos.reduce((sum, a, i)=>sum+(a.beta*GLOBAL.pesos[i]),0);
-  
-  let garchHtml = GLOBAL.garch ? `<div class="card" style="margin-bottom:0">
+
+      let rrD = GLOBAL.rends.map((r, i) => ({ x: r.estadisticas.volatilidad_anualizada * 100, y: r.estadisticas.media_anualizada * 100, n: r.ticker }));
+      regCh('c-rr', {
+        type: 'scatter', data: { datasets: [{ data: rrD, backgroundColor: CLRS.slice(0, rrD.length), pointRadius: 9, pointHoverRadius: 11 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => { const d = rrD[ctx.dataIndex]; return `${d.n}  σ:${f1(d.x)}%  μ:${f1(d.y)}%` } } } },
+          scales: {
+            x: { ...axBase, title: { display: true, text: 'Volatilidad anual (%)', color: tc, font: { size: 11 } } },
+            y: { ...axBase, title: { display: true, text: 'Retorno anual (%)', color: tc, font: { size: 11 } } }
+          }
+        }
+      });
+    }
+
+    // Funciones dinámicas MA
+    function calcSMA(data, period) {
+      return data.map((val, i, arr) => {
+        if (i < period - 1) return null;
+        let sum = 0;
+        for (let j = 0; j < period; j++) sum += arr[i - j];
+        return sum / period;
+      });
+    }
+
+    function calcEMA(data, period) {
+      if (data.length === 0) return [];
+      const k = 2 / (period + 1);
+      let emaArr = new Array(data.length).fill(null);
+      let initialSmaSum = 0;
+
+      // Seed con SMA
+      for (let i = 0; i < Math.min(period, data.length); i++) {
+        initialSmaSum += data[i];
+      }
+      if (data.length >= period) {
+        emaArr[period - 1] = initialSmaSum / period;
+      }
+
+      for (let i = period; i < data.length; i++) {
+        emaArr[i] = (data[i] - emaArr[i - 1]) * k + emaArr[i - 1];
+      }
+      return emaArr;
+    }
+
+    function drawPriceChart() {
+      if (!GLOBAL || !GLOBAL.precios || GLOBAL.precios.length === 0) return;
+      const dd = document.getElementById('dd-price');
+      if (!dd) return;
+      const idx = parseInt(dd.value) || 0;
+      const px = GLOBAL.precios[idx];
+      const ticker = GLOBAL.tickers[idx];
+      const dates = step(px.precios).map(p => p.fecha);
+      const prices = step(px.precios).map(p => p.precio);
+      const d = GLOBAL.rends[idx]; // Para los otros graficos (Q-Q y Boxplot)
+
+      // Q-Q Plot dinámico
+      if (d && d.qq_plot) {
+        regCh('c-qq', {
+          type: 'scatter',
+          data: {
+            datasets: [
+              { label: 'Puntos Empíricos', data: d.qq_plot.map(p => ({ x: p.teorico, y: p.empirico })), backgroundColor: '#3b82f6', pointRadius: 3 },
+              { label: 'Normal Teórica', data: [{ x: -3, y: -3 }, { x: 3, y: 3 }], type: 'line', borderColor: 'rgba(239,68,68,0.5)', borderWidth: 1, pointRadius: 0, fill: false }
+            ]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { ...axBase, title: { display: true, text: 'Cuantil Teórico', color: tc, font: { size: 9 } } },
+              y: { ...axBase, title: { display: true, text: 'Cuantil Empírico', color: tc, font: { size: 9 } } }
+            }
+          }
+        });
+
+        // Boxplot Múltiple dinámico (Seaborn-style: Stripplot + Boxplot)
+        let mMin = Infinity, mMax = -Infinity;
+        GLOBAL.rends.forEach(r => {
+          if (r.boxplot.min < mMin) mMin = r.boxplot.min;
+          if (r.boxplot.max > mMax) mMax = r.boxplot.max;
+        });
+        const rRange = mMax - mMin;
+        const getP = v => rRange === 0 ? 50 : 85 - ((v - mMin) / rRange * 75);
+
+        // Configuramos un ancho dinámico basado en la cantidad de activos (aprox 80px por caja)
+        const boxWidth = 80;
+        const totalW = GLOBAL.rends.length * boxWidth;
+        const svgW = Math.max(totalW, 400); // Mínimo 400 para que las etiquetas Y se vean bien
+
+        let svgContent = `<svg width="${svgW}" height="100%" viewBox="-50 0 ${svgW + 60} 100" preserveAspectRatio="none">`;
+
+        // 1. Grid Lines horizontales y Labels de eje Y
+        for (let i = 0; i <= 4; i++) {
+          const val = mMin + (rRange * i / 4);
+          const y = getP(val);
+          svgContent += `
+            <line x1="0" y1="${y}" x2="${svgW}" y2="${y}" stroke="#1e293b" stroke-width="0.3" />
+            <text x="-5" y="${y + 2}" fill="#64748b" font-size="4" text-anchor="end">${pct(val, 1)}</text>
+          `;
+        }
+
+        GLOBAL.rends.forEach((r, idx) => {
+          const b = r.boxplot;
+          const o = idx * boxWidth;
+          const c = CLRS[idx % CLRS.length];
+
+          // Puntos dispersos (Stripplot / Jitter) - Usamos una muestra de rendimientos
+          const sampleRends = r.rendimientos.slice(-150);
+          let points = '';
+          sampleRends.forEach(pt => {
+            const jitter = (boxWidth / 2) + (Math.random() - 0.5) * (boxWidth * 0.4);
+            points += `<circle cx="${o + jitter}" cy="${getP(pt.rendimiento_log)}" r="0.6" fill="${c}" fill-opacity="0.3" />`;
+          });
+
+          svgContent += `
+             <g style="cursor:help">
+               <title>${r.ticker} Rends&#10;Máx: ${pct(b.max)}&#10;Q3: ${pct(b.q3)}&#10;Med: ${pct(b.med)}&#10;Q1: ${pct(b.q1)}&#10;Mín: ${pct(b.min)}</title>
+               
+               ${points}
+
+               <!-- Whiskers -->
+               <line x1="${o + boxWidth / 2}" y1="${getP(b.min)}" x2="${o + boxWidth / 2}" y2="${getP(b.max)}" stroke="#94a3b8" stroke-width="0.5" />
+               
+               <!-- Box -->
+               <rect x="${o + boxWidth * 0.2}" y="${getP(b.q3)}" width="${boxWidth * 0.6}" height="${Math.abs(getP(b.q1) - getP(b.q3))}" fill="${c}22" stroke="${c}" stroke-width="0.8" />
+               
+               <!-- Median Line -->
+               <line x1="${o + boxWidth * 0.2}" y1="${getP(b.med)}" x2="${o + boxWidth * 0.8}" y2="${getP(b.med)}" stroke="#f1f5f9" stroke-width="1.5" />
+               
+               <!-- Label Ticker -->
+               <text x="${o + boxWidth / 2}" y="95" fill="#e2e8f0" font-size="6" text-anchor="middle" font-weight="bold">${r.ticker}</text>
+             </g>
+           `;
+        });
+        svgContent += `</svg>`;
+        document.getElementById('box-cont').innerHTML = svgContent;
+      }
+
+      // SMA / EMA dinámicos
+      const smaP = parseInt(document.getElementById('dd-sma').value) || 0;
+      const emaP = parseInt(document.getElementById('dd-ema').value) || 0;
+
+      const rawPrices = px.precios.map(p => p.precio);
+      let smaData = [], emaData = [];
+
+      if (smaP > 0) {
+        const fullSma = calcSMA(rawPrices, smaP);
+        smaData = step(fullSma.map((val, i) => ({ fecha: px.precios[i].fecha, precio: val }))).map(p => p.precio);
+      }
+      if (emaP > 0) {
+        const fullEma = calcEMA(rawPrices, emaP);
+        emaData = step(fullEma.map((val, i) => ({ fecha: px.precios[i].fecha, precio: val }))).map(p => p.precio);
+      }
+
+      const datasets = [
+        { label: `${ticker} Precio`, data: prices, borderColor: CLRS[idx % CLRS.length], borderWidth: 2, pointRadius: 0, fill: false, tension: .2 }
+      ];
+      if (smaP > 0) {
+        datasets.push({ label: `SMA ${smaP}`, data: smaData, borderColor: '#f59e0b', borderWidth: 1.3, pointRadius: 0, borderDash: [4, 2], fill: false, tension: .2 });
+      }
+      if (emaP > 0) {
+        datasets.push({ label: `EMA ${emaP}`, data: emaData, borderColor: '#a78bfa', borderWidth: 1.3, pointRadius: 0, borderDash: [6, 3], fill: false, tension: .2 });
+      }
+
+      regCh('c-price', {
+        type: 'line', data: {
+          labels: dates, datasets: datasets
+        }, options: {
+          responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { display: true, position: 'top', align: 'end', labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12, usePointStyle: true } } },
+          scales: { x: { ...axBase }, y: { ...axBase, ticks: { ...axBase.ticks, callback: v => '$' + v.toFixed(0) } } }
+        }
+      });
+    }
+
+    /* ══ B. RIESGO ════════════════════════════════════════ */
+    function renderRisk() {
+      if (!GLOBAL) return;
+      const el = document.getElementById('s-risk');
+      const pd = GLOBAL.macro.desempeno_portafolio;
+      const bd = GLOBAL.macro.desempeno_benchmark;
+      const v = GLOBAL.varData;
+      const c = GLOBAL.capm;
+      const betaPort = c.activos.reduce((sum, a, i) => sum + (a.beta * GLOBAL.pesos[i]), 0);
+      const cv = v.cvar;
+
+      // ── Perfil de riesgo ──
+      let perfil, perfilColor, perfilIcon, perfilDesc, perfilTickers, perfilEstrategia;
+      if (betaPort < 0.8) {
+        perfil = 'Defensivo (Core / Value)'; perfilColor = '#10b981'; perfilIcon = '🛡️';
+        perfilDesc = 'Minimizar la Desviación Estándar y lograr un β < 0.8. Empresas maduras con flujos de caja inelásticos a los ciclos económicos.';
+        perfilTickers = 'JNJ (Salud) · PG / KO (Consumo Básico) · NOC / LMT (Defensa) · NEE (Utilities)';
+        perfilEstrategia = 'Empresas monopolísticas u oligopolísticas cuyos productos son comprados haya crisis o no. Presupuestos de defensa como seguro contra volatilidad tecnológica.';
+      } else if (betaPort <= 1.2) {
+        perfil = 'Dinámico (Blend)'; perfilColor = '#3b82f6'; perfilIcon = '⚖️';
+        perfilDesc = 'Replicar el riesgo sistemático del mercado con β ≈ 1.0 – 1.1. Mega-caps que dictan la dirección del S&P 500.';
+        perfilTickers = 'MSFT · AAPL (Tech Mega-cap) · V / MA (Peajes de la economía) · BRK.B (Diversificación interna)';
+        perfilEstrategia = 'Combinación de crecimiento moderado con ingresos sólidos. Visa y Mastercard crecen atadas a la inflación y al gasto del consumidor.';
+      } else if (betaPort <= 1.5) {
+        perfil = 'Agresivo'; perfilColor = '#f59e0b'; perfilIcon = '🔥';
+        perfilDesc = 'Exposición elevada a la volatilidad con β entre 1.2 y 1.5. Balance entre crecimiento y gestión del riesgo.';
+        perfilTickers = 'NVDA · AMD (IA) · MSFT (ancla) · ASML (Semiconductores)';
+        perfilEstrategia = 'Infraestructura de IA con anclas de estabilidad. Requiere monitoreo activo del VaR para controlar el drawdown.';
+      } else {
+        perfil = 'Muy Agresivo — Especulativo (Growth)'; perfilColor = '#ef4444'; perfilIcon = '⚡';
+        perfilDesc = 'Maximizar retorno asumiendo exposición extrema a la volatilidad con β > 1.5. Gestión del VaR muy estricta.';
+        perfilTickers = 'NVDA / AMD (IA) · ASML (Semiconductores) · HOOD (Fintech) · IREN / COIN (Cripto)';
+        perfilEstrategia = 'Startups tecnológicas, infraestructura de IA y criptoactivos. Sufren correcciones brutales cuando las expectativas de ingresos fallan.';
+      }
+
+      let garchHtml = GLOBAL.garch ? `<div class="card" style="margin-bottom:0">
         <div class="ct">Pronóstico Volatilidad — ${GLOBAL.garch.mejor_modelo} (${GLOBAL.garch.ticker})</div>
         <div style="position:relative;height:200px"><canvas id="c-garch"></canvas></div>
-      </div>` : `<div class="card" style="margin-bottom:0;display:flex;align-items:center;justify-content:center"><span style="color:#64748b">Datos GARCH no disponibles</span></div>`;
+      </div>`: `<div class="card" style="margin-bottom:0;display:flex;align-items:center;justify-content:center"><span style="color:#64748b">Datos GARCH no disponibles</span></div>`;
 
-  el.innerHTML=`
-    <div class="g3">
-      <div class="mc"><div class="ml">Max drawdown portafolio</div><div class="mv">${pct(pd.maximo_drawdown)}</div><div class="ms">benchmark: ${pct(bd.maximo_drawdown)}</div></div>
-      <div class="mc"><div class="ml">Beta estimado</div><div class="mv">${f2(betaPort)}</div><div class="ms">${betaPort>1.2?'agresivo':betaPort>0.8?'neutro':'defensivo'}</div></div>
-      <div class="mc"><div class="ml">CVaR 95% diario (ES)</div><div class="mv">${v.cvar.hist_95_pct}</div><div class="ms">expected shortfall</div></div>
+      el.innerHTML = `
+    <div class="card" style="border-color:${perfilColor};border-width:2px;margin-bottom:1.25rem">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div>
+          <div class="ct" style="color:${perfilColor};margin-bottom:6px">${perfilIcon} Perfil de Riesgo del Portafolio</div>
+          <div style="font-size:20px;font-weight:700;color:${perfilColor}">${perfil}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.06em">Beta Ponderado</div>
+          <div style="font-size:32px;font-weight:700;font-family:'SF Mono',monospace;color:${perfilColor}">${f2(betaPort)}</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.6;margin-bottom:14px">
+        <strong style="color:#e2e8f0">Objetivo técnico:</strong> ${perfilDesc}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+        <div style="background:#0f1117;border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:#64748b;text-transform:uppercase;margin-bottom:4px">Volatilidad Anual</div>
+          <div style="font-size:18px;font-weight:600;font-family:'SF Mono',monospace;color:${perfilColor}">${pct(pd.volatilidad_anualizada)}</div>
+          <div style="font-size:10px;color:#475569;margin-top:3px">bench: ${pct(bd.volatilidad_anualizada)}</div>
+        </div>
+        <div style="background:#0f1117;border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:#64748b;text-transform:uppercase;margin-bottom:4px">VaR 95% Diario</div>
+          <div style="font-size:18px;font-weight:600;font-family:'SF Mono',monospace;color:${perfilColor}">${v.parametrico.var_diario_pct}</div>
+          <div style="font-size:10px;color:#475569;margin-top:3px">paramétrico</div>
+        </div>
+        <div style="background:#0f1117;border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:#64748b;text-transform:uppercase;margin-bottom:4px">CVaR 95% (ES)</div>
+          <div style="font-size:18px;font-weight:600;font-family:'SF Mono',monospace;color:${perfilColor}">${cv.cvar_diario_pct}</div>
+          <div style="font-size:10px;color:#475569;margin-top:3px">expected shortfall</div>
+        </div>
+        <div style="background:#0f1117;border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:#64748b;text-transform:uppercase;margin-bottom:4px">Max Drawdown</div>
+          <div style="font-size:18px;font-weight:600;font-family:'SF Mono',monospace;color:${perfilColor}">${pct(pd.maximo_drawdown)}</div>
+          <div style="font-size:10px;color:#475569;margin-top:3px">bench: ${pct(bd.maximo_drawdown)}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#0f1117;border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:#64748b;text-transform:uppercase;margin-bottom:4px">Estrategia</div>
+          <div style="font-size:12px;color:#94a3b8;line-height:1.5">${perfilEstrategia}</div>
+        </div>
+        <div style="background:#0f1117;border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:#64748b;text-transform:uppercase;margin-bottom:4px">Tickers sugeridos para este perfil</div>
+          <div style="font-size:12px;color:${perfilColor};font-weight:500;line-height:1.6">${perfilTickers}</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:#475569;border-top:1px solid #1e2435;padding-top:10px">
+        <strong style="color:#64748b">Escala β:</strong>
+        <span style="color:#10b981">■ Defensivo (β &lt; 0.8)</span> · 
+        <span style="color:#3b82f6">■ Dinámico (0.8 – 1.2)</span> · 
+        <span style="color:#f59e0b">■ Agresivo (1.2 – 1.5)</span> · 
+        <span style="color:#ef4444">■ Especulativo (β &gt; 1.5)</span>
+      </div>
     </div>
-    <div class="card">
-      <div class="ct">Value at Risk (VaR) — Nivel de Confianza: ${v.nivel_confianza*100}%</div>
-      <div style="overflow-x:auto">
-      <table class="ht">
-        <thead><tr><th>Método</th><th>VaR Diario</th><th>VaR Anualizado</th><th>CVaR</th></tr></thead>
-        <tbody>
-          <tr><td>Paramétrico</td><td>${v.parametrico.var_diario_pct}</td><td>${v.parametrico.var_anual_pct}</td><td>${v.cvar.param_95_pct}</td></tr>
-          <tr><td>Histórico</td><td>${v.historico.var_diario_pct}</td><td>${v.historico.var_anual_pct}</td><td>${v.cvar.hist_95_pct}</td></tr>
-          <tr><td>Montecarlo</td><td>${v.montecarlo.var_diario_pct}</td><td>${v.montecarlo.var_anual_pct}</td><td>${v.cvar.mc_95_pct}</td></tr>
-        </tbody>
-      </table>
+    <div class="card" style="margin-top:1.5rem;border-left:4px solid #f59e0b">
+      <div class="ct">5. Backtesting del Modelo VaR (Test de Kupiec)</div>
+      <div class="g2">
+         <div style="background:#0f1117;padding:15px;border-radius:10px">
+            <div style="font-size:11px;color:#64748b;margin-bottom:10px">RECUENTO DE EXCEPCIONES</div>
+            <div class="g2">
+               <div style="text-align:center">
+                  <div style="font-size:10px;color:#94a3b8">Esperadas</div>
+                  <div style="font-size:24px;font-weight:700;color:#e2e8f0">${v.backtesting.excepciones_esperadas}</div>
+               </div>
+               <div style="text-align:center">
+                  <div style="font-size:10px;color:#94a3b8">Reales</div>
+                  <div style="font-size:24px;font-weight:700;color:${v.backtesting.kupiec_valido ? '#10b981' : '#f87171'}">${v.backtesting.excepciones_reales}</div>
+               </div>
+            </div>
+         </div>
+         <div style="background:#0f1117;padding:15px;border-radius:10px">
+            <div style="font-size:11px;color:#64748b;margin-bottom:10px">RESULTADO ESTADÍSTICO (POF)</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+               <div>
+                  <div style="font-size:10px;color:#94a3b8">p-valor</div>
+                  <div style="font-size:18px;font-family:'SF Mono',monospace;color:#e2e8f0">${v.backtesting.kupiec_p_valor.toFixed(4)}</div>
+               </div>
+               <div class="sig ${v.backtesting.kupiec_valido ? 'sb' : 'ss'}">
+                  ${v.backtesting.kupiec_valido ? '✓ MODELO VÁLIDO' : '✗ RECHAZADO'}
+               </div>
+            </div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:10px">
+               ${v.backtesting.interpretacion}
+            </div>
+         </div>
       </div>
     </div>
     <div class="g2">
       <div class="card" style="margin-bottom:0">
-        <div class="ct">Riesgo Idiosincrático vs Sistemático (CAPM β)</div>
+        <div class="ct">Security Market Line (CAPM β)</div>
         <div style="position:relative;height:200px"><canvas id="c-sml"></canvas></div>
       </div>
       ${garchHtml}
+    </div>
+    
+    <div class="card" style="background:rgba(59,130,246,0.05);border:1px dashed #3b82f6">
+      <div class="ct" style="color:#60a5fa">💡 Guía de Interpretación de Riesgo</div>
+      <div class="g2" style="font-size:12px;color:#94a3b8;line-height:1.5">
+        <div>
+          <p><strong style="color:#e2e8f0">VaR (95%):</strong> Con un 95% de confianza, la pérdida máxima esperada en un día no superará este valor. Si el VaR es 2%, solo hay un 5% de probabilidad de perder más del 2% diario.</p>
+          <p style="margin-top:8px"><strong style="color:#e2e8f0">CVaR (Expected Shortfall):</strong> Responde a: <em>"Si superamos el VaR, ¿cuánto perderemos?"</em>. Es el promedio de las pérdidas extremas. Siempre es mayor que el VaR.</p>
+        </div>
+        <div>
+          <p><strong style="color:#e2e8f0">Test de Kupiec:</strong> Valida si el VaR es preciso. Si el p-valor es &lt; 0.05, el número de excepciones es improbable para un modelo preciso (rechazamos el modelo).</p>
+          <p style="margin-top:8px"><strong style="color:#e2e8f0">Beta (β):</strong> Sensibilidad al mercado. β > 1 (Agresivo), β &lt; 1 (Defensivo). Un β de 1.5 indica que el activo varía un 50% más que el índice.</p>
+        </div>
+      </div>
     </div>`;
 
-  if(GLOBAL.garch){
-    regCh('c-garch',{type:'line',data:{
-      labels:Array.from({length:GLOBAL.garch.pronostico_volatilidad.length},(_,i)=>'D+'+(i+1)),
-      datasets:[{label:'Volatilidad anualizada (%)',data:GLOBAL.garch.pronostico_volatilidad.map(v=>v*100),borderColor:'#f59e0b',borderWidth:2,pointRadius:3,pointBackgroundColor:'#f59e0b',fill:true,backgroundColor:'rgba(245,158,11,.07)',tension:.4}]
-    },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{...axBase.x},y:{...axBase.y}}}});
-  }
+      if (GLOBAL.garch) {
+        regCh('c-garch', {
+          type: 'line', data: {
+            labels: Array.from({ length: GLOBAL.garch.pronostico_volatilidad.length }, (_, i) => 'D+' + (i + 1)),
+            datasets: [{ label: 'Volatilidad (%)', data: GLOBAL.garch.pronostico_volatilidad.map(v => v * 100), borderColor: '#f59e0b', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#f59e0b', fill: true, backgroundColor: 'rgba(245,158,11,.07)', tension: .4 }]
+          }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ...axBase }, y: { ...axBase } } }
+        });
+      }
 
-  const betas = c.activos.map(a=>a.beta);
-  const rets = c.activos.map(a=>a.rendimiento_esperado_capm*100);
-  regCh('c-sml',{type:'scatter',data:{datasets:[
-    {label:'SML (Mercado)',data:[{x:0,y:c.rf_actual*100},{x:Math.max(...betas)*1.2,y:(c.rf_actual*100)+(Math.max(...betas)*1.2)*(c.rendimiento_mercado_anual*100-c.rf_actual*100)}],type:'line',borderColor:'rgba(148,163,184,.5)',borderWidth:1.5,pointRadius:0,borderDash:[5,3],fill:false},
-    {label:'Activos',data:c.activos.map((a,i)=>({x:a.beta,y:a.rendimiento_esperado_capm*100,n:a.ticker})),backgroundColor:CLRS.slice(0,betas.length),pointRadius:9,pointHoverRadius:11}
-  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.n} β:${f2(c.raw.x)} Ret:${f1(c.raw.y)}%`}}},scales:{x:{...axBase.x,title:{display:true,text:'Beta (β)',color:tc}},y:{...axBase.y,title:{display:true,text:'Retorno ESP CAPM (%)',color:tc}}}}});
-}
+      const betas = c.activos.map(a => a.beta);
+      regCh('c-sml', {
+        type: 'scatter', data: {
+          datasets: [
+            { label: 'SML', data: [{ x: 0, y: c.rf_actual * 100 }, { x: Math.max(...betas) * 1.2, y: (c.rf_actual + (Math.max(...betas) * 1.2) * (c.rendimiento_mercado_anual - c.rf_actual)) * 100 }], type: 'line', borderColor: 'rgba(148,163,184,.5)', borderWidth: 1.5, pointRadius: 0, borderDash: [5, 3], fill: false },
+            { label: 'Activos', data: c.activos.map(a => ({ x: a.beta, y: a.rendimiento_esperado_capm * 100 })), backgroundColor: CLRS.slice(0, betas.length), pointRadius: 9, pointHoverRadius: 11 }
+          ]
+        }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => { if (ctx.datasetIndex === 1) { const a = c.activos[ctx.dataIndex]; return `${a.ticker} β:${f2(a.beta)} Ret:${f1(a.rendimiento_esperado_capm * 100)}%` } return '' } } } }, scales: { x: { ...axBase, title: { display: true, text: 'Beta (β)', color: tc } }, y: { ...axBase, title: { display: true, text: 'Retorno CAPM (%)', color: tc } } } }
+      });
+    }
 
-const f1=v=>v.toFixed(1);
+    /* ══ C. OPTIMIZACIÓN ══════════════════════════════════ */
+    function renderOptim() {
+      if (!GLOBAL) return;
+      const el = document.getElementById('s-optim');
+      const f = GLOBAL.front;
+      const mv = f.portafolio_min_varianza;
+      const ms = f.portafolio_max_sharpe;
+      const crM = f.matriz_correlacion;
 
-function renderOptim(){
-  if(!GLOBAL) return;
-  const el = document.getElementById('s-optim');
-  const f = GLOBAL.front;
-  const mv = f.portafolio_min_varianza;
-  const ms = f.portafolio_max_sharpe;
-  const crM = f.matriz_correlacion;
-  
-  el.innerHTML=`
+      el.innerHTML = `
     <div class="g2">
       <div class="card" style="border-color:#10b981;margin-bottom:0">
         <div class="ct" style="color:#10b981">Portafolio Mínima Varianza ★</div>
         <div style="font-size:13px;font-family:'SF Mono',monospace;color:#94a3b8;margin-bottom:12px">Vol <span style="color:#10b981;font-weight:600">${pct(mv.volatilidad_anual)}</span> &nbsp; Ret ${pctS(mv.rendimiento_anual)} &nbsp; Sharpe ${f2(mv.sharpe_ratio)}</div>
-        ${mv.tickers.map((t,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid #1e2435"><span style="color:#94a3b8">${t}</span><div style="display:flex;align-items:center;gap:7px"><div style="width:${mv.pesos[i]*100}px;height:4px;background:#10b981;border-radius:2px"></div><span style="font-family:'SF Mono',monospace;min-width:38px;text-align:right">${pct(mv.pesos[i])}</span></div></div>`).join('')}
+        ${mv.tickers.map((t, i) => `<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid #1e2435"><span style="color:#94a3b8">${t}</span><div style="display:flex;align-items:center;gap:7px"><div style="width:${mv.pesos[i] * 100}px;height:4px;background:#10b981;border-radius:2px"></div><span style="font-family:'SF Mono',monospace;min-width:38px;text-align:right">${pct(mv.pesos[i])}</span></div></div>`).join('')}
       </div>
       <div class="card" style="border-color:#f59e0b;margin-bottom:0">
         <div class="ct" style="color:#f59e0b">Portafolio Máximo Sharpe ★</div>
         <div style="font-size:13px;font-family:'SF Mono',monospace;color:#94a3b8;margin-bottom:12px">Vol <span style="color:#f59e0b;font-weight:600">${pct(ms.volatilidad_anual)}</span> &nbsp; Ret ${pctS(ms.rendimiento_anual)} &nbsp; Sharpe ${f2(ms.sharpe_ratio)}</div>
-        ${ms.tickers.map((t,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid #1e2435"><span style="color:#94a3b8">${t}</span><div style="display:flex;align-items:center;gap:7px"><div style="width:${ms.pesos[i]*100}px;height:4px;background:#f59e0b;border-radius:2px"></div><span style="font-family:'SF Mono',monospace;min-width:38px;text-align:right">${pct(ms.pesos[i])}</span></div></div>`).join('')}
+        ${ms.tickers.map((t, i) => `<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid #1e2435"><span style="color:#94a3b8">${t}</span><div style="display:flex;align-items:center;gap:7px"><div style="width:${ms.pesos[i] * 100}px;height:4px;background:#f59e0b;border-radius:2px"></div><span style="font-family:'SF Mono',monospace;min-width:38px;text-align:right">${pct(ms.pesos[i])}</span></div></div>`).join('')}
       </div>
     </div>
     <div class="card">
-      <div class="ct">Frontera Eficiente — Simulación Montecarlo (${f.n_simulaciones} iteraciones)</div>
-      <div style="position:relative;height:290px"><canvas id="c-front"></canvas></div>
+      <div class="ct">Frontera Eficiente — ${f.n_simulaciones} portafolios simulados (colorbar: Ratio de Sharpe)</div>
+      <div style="position:relative;height:320px"><canvas id="c-front"></canvas></div>
     </div>
     <div class="card">
       <div class="ct">Matriz de Correlación de Activos</div>
       <div style="overflow-x:auto"><table class="ht" style="text-align:center">
-        <thead><tr><th></th>${f.tickers.map(t=>`<th style="text-align:center">${t}</th>`).join('')}</tr></thead>
-        <tbody>${f.tickers.map(ti=>`<tr><td style="text-align:left;font-weight:600">${ti}</td>
-          ${f.tickers.map(tj=>`<td style="font-family:'SF Mono',monospace;background:${crM[ti][tj]>=0?`rgba(59,130,246,${.12+crM[ti][tj]*.45})`:`rgba(239,68,68,${.12-crM[ti][tj]*.4})`};color:#e2e8f0">${crM[ti][tj].toFixed(2)}</td>`).join('')}
+        <thead><tr><th></th>${f.tickers.map(t => `<th style="text-align:center">${t}</th>`).join('')}</tr></thead>
+        <tbody>${f.tickers.map(ti => `<tr><td style="text-align:left;font-weight:600">${ti}</td>
+          ${f.tickers.map(tj => `<td style="font-family:'SF Mono',monospace;background:${crM[ti][tj] >= 0 ? `rgba(59,130,246,${.12 + crM[ti][tj] * .45})` : `rgba(239,68,68,${.12 - crM[ti][tj] * .4})`};color:#e2e8f0">${crM[ti][tj].toFixed(2)}</td>`).join('')}
         </tr>`).join('')}</tbody>
       </table></div>
     </div>`;
 
-  regCh('c-front',{type:'scatter',data:{datasets:[
-    {label:'Simulados',data:step(f.puntos_simulados).map(p=>({x:p.volatilidad*100,y:p.rendimiento*100})),backgroundColor:'rgba(99,102,241,.28)',pointRadius:4,pointHoverRadius:6},
-    {label:'Min Var',data:[{x:mv.volatilidad_anual*100,y:mv.rendimiento_anual*100}],backgroundColor:'#10b981',pointRadius:12,pointStyle:'star'},
-    {label:'Max Sharpe',data:[{x:ms.volatilidad_anual*100,y:ms.rendimiento_anual*100}],backgroundColor:'#f59e0b',pointRadius:12,pointStyle:'star'}
-  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#94a3b8'}}},scales:{x:{...axBase.x,title:{display:true,text:'Volatilidad (%)',color:tc}},y:{...axBase.y,title:{display:true,text:'Retorno (%)',color:tc}}}}});
-}
+      // ── Frontera Eficiente con colorbar Sharpe ──
+      const pts = f.puntos_simulados;
+      const sharpes = pts.map(p => p.sharpe);
+      const minSr = Math.min(...sharpes), maxSr = Math.max(...sharpes);
 
-function renderSig(){
-  if(!GLOBAL) return;
-  const el = document.getElementById('s-sig');
-  const a = GLOBAL.alertas.alertas;
-  const m = GLOBAL.macro.indicadores_macro;
-  
-  el.innerHTML=`
+      // Ordenar por Sharpe para la línea de la frontera (envelope superior)
+      const sorted = [...pts].sort((a, b) => a.volatilidad - b.volatilidad);
+      // Construir frontera: para cada bucket de volatilidad, tomar el de mayor rendimiento
+      const buckets = 20;
+      const vMin = sorted[0].volatilidad, vMax = sorted[sorted.length - 1].volatilidad;
+      const bw = (vMax - vMin) / buckets;
+      let frontier = [];
+      for (let i = 0; i < buckets; i++) {
+        const lo = vMin + i * bw, hi = lo + bw;
+        const inBucket = sorted.filter(p => p.volatilidad >= lo && p.volatilidad < hi);
+        if (inBucket.length > 0) {
+          const best = inBucket.reduce((a, b) => b.rendimiento > a.rendimiento ? b : a);
+          frontier.push({ x: best.volatilidad * 100, y: best.rendimiento * 100 });
+        }
+      }
+
+      regCh('c-front', {
+        type: 'scatter', data: {
+          datasets: [
+            {
+              label: 'Portafolios', data: step(pts).map(p => ({ x: p.volatilidad * 100, y: p.rendimiento * 100 })),
+              backgroundColor: step(pts).map(p => sharpeColor(p.sharpe, minSr, maxSr)), pointRadius: 4, pointHoverRadius: 6
+            },
+            { label: 'Frontera Eficiente', data: frontier, type: 'line', borderColor: '#e2e8f0', borderWidth: 2, pointRadius: 0, fill: false, tension: .3 },
+            { label: 'Min Varianza', data: [{ x: mv.volatilidad_anual * 100, y: mv.rendimiento_anual * 100 }], backgroundColor: '#3b82f6', borderColor: '#fff', borderWidth: 2, pointRadius: 10, pointStyle: 'triangle', rotation: 180 },
+            { label: 'Max Sharpe', data: [{ x: ms.volatilidad_anual * 100, y: ms.rendimiento_anual * 100 }], backgroundColor: '#ef4444', borderColor: '#fff', borderWidth: 2, pointRadius: 10, pointStyle: 'triangle', rotation: 0 }
+          ]
+        }, options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: true, position: 'top', align: 'end', labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12, usePointStyle: true } } },
+          scales: {
+            x: { ...axBase, title: { display: true, text: 'Volatilidad (%)', color: tc, font: { size: 11 } } },
+            y: { ...axBase, title: { display: true, text: 'Rendimiento Esperado (%)', color: tc, font: { size: 11 } } }
+          }
+        }
+      });
+    }
+
+    /* ══ D. SEÑALES ═══════════════════════════════════════ */
+    function renderSig() {
+      if (!GLOBAL) return;
+      const el = document.getElementById('s-sig');
+      const a = GLOBAL.alertas.alertas;
+      const m = GLOBAL.macro.indicadores_macro;
+
+      el.innerHTML = `
     <div class="g3">
-      ${m.map(im=>`<div class="mc"><div class="ml">${im.nombre}</div><div class="mv">${im.valor_actual}${im.unidad.replace('Porcentaje','%')}</div><div class="ms">FRED: ${im.serie_fred}</div></div>`).join('')}
-      ${m.length<3?`<div class="mc"><div class="ml">Tasa Libre R. (RF)</div><div class="mv">${pct(GLOBAL.capm.rf_actual)}</div><div class="ms">Actual</div></div>`:''}
+      ${m.map(im => `<div class="mc"><div class="ml">${im.nombre}</div><div class="mv">${im.valor_actual}${im.unidad.replace('Porcentaje', '%')}</div><div class="ms">FRED: ${im.serie_fred}</div></div>`).join('')}
+      ${m.length < 3 ? `<div class="mc"><div class="ml">Tasa Libre R. (RF)</div><div class="mv">${pct(GLOBAL.capm.rf_actual)}</div><div class="ms">Actual</div></div>` : ''}
     </div>
     <div class="card">
       <div class="ct">Panel Automático de Señales Técnicas</div>
       <div style="overflow-x:auto">
         <div class="srow" style="min-width:460px">
-          <div class="srow-hdr">Activo</div><div class="srow-hdr">MACD</div><div class="srow-hdr">RSI</div><div class="srow-hdr">Bandas Bollinger</div><div class="srow-hdr">Señal Algorítmica</div>
-          ${a.map((al)=>`
+          <div class="srow-hdr">Activo</div><div class="srow-hdr">MACD</div><div class="srow-hdr">RSI</div><div class="srow-hdr">Bollinger</div><div class="srow-hdr">Señal</div>
+          ${a.map(al => `
             <div class="srow-name">${al.ticker}</div>
             <div class="srow-cell"><span class="sig ${sigCls(al.macd_senal)}">${al.macd_senal}</span></div>
-            <div class="srow-cell"><span class="sig ${sigCls(al.rsi_senal)}">${al.rsi_senal}</span><span style="font-size:10px;margin-left:4px">${f1(al.rsi_actual||0)}</span></div>
+            <div class="srow-cell"><span class="sig ${sigCls(al.rsi_senal)}">${al.rsi_senal}</span><span style="font-size:10px;margin-left:4px">${f1(al.rsi_actual || 0)}</span></div>
             <div class="srow-cell"><span class="sig ${sigCls(al.bollinger_senal)}">${al.bollinger_senal}</span></div>
             <div class="srow-cell"><span class="sig ${sigCls(al.senal_global)}" style="font-size:12px;font-weight:700;padding:4px 10px">${al.senal_global}</span></div>
           `).join('')}
@@ -356,35 +1199,372 @@ function renderSig(){
       </div>
     </div>
     <div class="card">
+      <div class="ct">Bandas de Bollinger + Precio</div>
+      <select class="sel-dd" id="dd-bb" onchange="drawBollinger()">
+        ${GLOBAL.tickers.map((t, i) => `<option value="${i}">${t}</option>`).join('')}
+      </select>
+      <div style="position:relative;height:250px"><canvas id="c-bb"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">MACD — Línea, Señal e Histograma</div>
+      <select class="sel-dd" id="dd-macd" onchange="drawMACD()">
+        ${GLOBAL.tickers.map((t, i) => `<option value="${i}">${t}</option>`).join('')}
+      </select>
+      <div style="position:relative;height:220px"><canvas id="c-macd"></canvas></div>
+    </div>
+    <div class="card">
       <div class="ct">RSI Últimos Períodos (Zonas Sobrecompra/Sobreventa)</div>
       <div style="position:relative;height:240px"><canvas id="c-rsi"></canvas></div>
+    </div>
+    
+    <div class="card" style="background:rgba(16,185,129,0.05);border:1px dashed #10b981">
+      <div class="ct" style="color:#34d399">💡 Guía de Interpretación de Señales</div>
+      <div class="g2" style="font-size:12px;color:#94a3b8;line-height:1.5">
+        <div>
+          <p><strong style="color:#e2e8f0">MACD:</strong> COMPRA cuando la línea MACD cruza sobre la señal. VENTA cuando cruza por debajo. El histograma mide la fuerza del momentum.</p>
+          <p style="margin-top:8px"><strong style="color:#e2e8f0">RSI (Relative Strength Index):</strong> Sobrecompra (> 70) sugiere corrección (Venta). Sobreventa (&lt; 30) sugiere rebote (Compra).</p>
+        </div>
+        <div>
+          <p><strong style="color:#e2e8f0">Bollinger Bands:</strong> Tocar la banda inferior suele ser señal de sobreventa técnica. Un estrechamiento de bandas suele preceder movimientos explosivos.</p>
+          <p style="margin-top:8px"><strong style="color:#e2e8f0">Cruce de Medias:</strong> Golden Cross (SMA20 > SMA50) es alcista. Death Cross (SMA20 &lt; SMA50) es una señal bajista fuerte.</p>
+        </div>
+      </div>
     </div>`;
 
-  let rsiLen = 60;
-  regCh('c-rsi',{type:'line',data:{
-    labels:Array.from({length:rsiLen},(_,i)=>'-'+(59-i)),
-    datasets:[
-      ...GLOBAL.tickers.map((t,i)=>{
-        let data = GLOBAL.ind[i].indicadores.slice(-rsiLen).map(x=>x.rsi_14||50);
-        return {label:t,data,borderColor:CLRS[i%CLRS.length],borderWidth:1.5,pointRadius:0,tension:.3,fill:false};
-      }),
-      {label:'OB',data:Array(rsiLen).fill(70),borderColor:'rgba(248,113,113,.35)',borderDash:[4,3],pointRadius:0},
-      {label:'OS',data:Array(rsiLen).fill(30),borderColor:'rgba(52,211,153,.35)',borderDash:[4,3],pointRadius:0}
-    ]
-  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:tc,boxWidth:10}}},scales:{x:{...axBase.x},y:{...axBase.y,min:15,max:85}}}});
-}
+      drawBollinger();
+      drawMACD();
 
-function sw(name, btn){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('act'));
-  btn.classList.add('act');
-  ['perf','risk','optim','sig'].forEach(n=>document.getElementById('s-'+n).style.display = n===name?'':'none');
-  ({perf:renderPerf, risk:renderRisk, optim:renderOptim, sig:renderSig}[name])();
-}
+      let rsiLen = 60;
+      regCh('c-rsi', {
+        type: 'line', data: {
+          labels: Array.from({ length: rsiLen }, (_, i) => '-' + (59 - i)),
+          datasets: [
+            ...GLOBAL.tickers.map((t, i) => {
+              let data = GLOBAL.ind[i].indicadores.slice(-rsiLen).map(x => x.rsi_14 || 50);
+              return { label: t, data, borderColor: CLRS[i % CLRS.length], borderWidth: 1.5, pointRadius: 0, tension: .3, fill: false };
+            }),
+            { label: 'OB 70', data: Array(rsiLen).fill(70), borderColor: 'rgba(248,113,113,.35)', borderDash: [4, 3], pointRadius: 0 },
+            { label: 'OS 30', data: Array(rsiLen).fill(30), borderColor: 'rgba(52,211,153,.35)', borderDash: [4, 3], pointRadius: 0 }
+          ]
+        }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, labels: { color: tc, boxWidth: 10 } } }, scales: { x: { ...axBase }, y: { ...axBase, min: 15, max: 85 } } }
+      });
+    }
 
-// Iniciar cargando la pestaña performance si hay tickers
-if(document.getElementById('inp-tickers').value){
-    // Auto load on init removed, user must press analyse to prevent massive startup requests hanging
-}
-</script>
+    function drawBollinger() {
+      if (!GLOBAL) return;
+      const idx = parseInt(document.getElementById('dd-bb').value);
+      const d = GLOBAL.ind[idx].indicadores.slice(-120);
+      const labels = d.map(x => x.fecha);
+      regCh('c-bb', {
+        type: 'line', data: {
+          labels, datasets: [
+            { label: 'Precio', data: d.map(x => x.precio), borderColor: CLRS[idx % CLRS.length], borderWidth: 2, pointRadius: 0, fill: false, tension: .2 },
+            { label: 'BB Superior', data: d.map(x => x.bb_superior), borderColor: 'rgba(248,113,113,.6)', borderWidth: 1, pointRadius: 0, fill: false, borderDash: [3, 2], tension: .2 },
+            { label: 'BB Media', data: d.map(x => x.bb_media), borderColor: 'rgba(148,163,184,.5)', borderWidth: 1, pointRadius: 0, fill: false, borderDash: [5, 3], tension: .2 },
+            { label: 'BB Inferior', data: d.map(x => x.bb_inferior), borderColor: 'rgba(52,211,153,.6)', borderWidth: 1, pointRadius: 0, fill: '+1', backgroundColor: 'rgba(100,116,139,.06)', borderDash: [3, 2], tension: .2 }
+          ]
+        }, options: {
+          responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { display: true, position: 'top', align: 'end', labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 10, usePointStyle: true } } },
+          scales: { x: { ...axBase, ticks: { ...axBase.ticks, maxTicksLimit: 10 } }, y: { ...axBase, ticks: { ...axBase.ticks, callback: v => '$' + v.toFixed(0) } } }
+        }
+      });
+    }
+
+    function drawMACD() {
+      if (!GLOBAL) return;
+      const idx = parseInt(document.getElementById('dd-macd').value);
+      const d = GLOBAL.ind[idx].indicadores.slice(-120);
+      const labels = d.map(x => x.fecha);
+      const hist = d.map(x => x.macd_hist || 0);
+      const histColors = hist.map(h => h >= 0 ? 'rgba(16,185,129,.6)' : 'rgba(239,68,68,.6)');
+
+      regCh('c-macd', {
+        type: 'bar', data: {
+          labels, datasets: [
+            { label: 'Histograma', data: hist, backgroundColor: histColors, borderWidth: 0, order: 2 },
+            { label: 'MACD', data: d.map(x => x.macd), type: 'line', borderColor: '#3b82f6', borderWidth: 1.5, pointRadius: 0, fill: false, tension: .3, order: 1 },
+            { label: 'Signal', data: d.map(x => x.macd_signal), type: 'line', borderColor: '#f59e0b', borderWidth: 1.5, pointRadius: 0, fill: false, tension: .3, borderDash: [4, 2], order: 1 }
+          ]
+        }, options: {
+          responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { display: true, position: 'top', align: 'end', labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 10, usePointStyle: true } } },
+          scales: { x: { ...axBase, ticks: { ...axBase.ticks, maxTicksLimit: 10 } }, y: { ...axBase } }
+        }
+      });
+    }
+
+    /* ── TAB SWITCHING ──────────────────────────────────── */
+    function sw(name, btn) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('act'));
+      btn.classList.add('act');
+      ['perf', 'risk', 'optim', 'sig', 'vol'].forEach(n => document.getElementById('s-' + n).style.display = n === name ? '' : 'none');
+      ({ perf: renderPerf, risk: renderRisk, optim: renderOptim, sig: renderSig, vol: renderVol }[name])();
+    }
+
+    /* ══ E. VOLATILIDAD ════════════════════════════════════ */
+    async function loadVolData(tickerIdx) {
+      if (!GLOBAL) return null;
+      const t = GLOBAL.tickers[tickerIdx];
+      const per = document.getElementById('inp-per').value;
+      if (GLOBAL.volData[t] && !GLOBAL.volData[t].error) return GLOBAL.volData[t];
+
+      try {
+        const data = await api(`/volatilidad/${t}`, { periodo: per });
+        if (data.error) throw new Error(data.message || "Error desconocido");
+        GLOBAL.volData[t] = data;
+        return data;
+      } catch (e) {
+        console.error('Volatilidad error:', e);
+        const errObj = { error: true, message: e.message || "Error al conectar con el servidor" };
+        GLOBAL.volData[t] = errObj;
+        return errObj;
+      }
+    }
+
+    function renderVol() {
+      if (!GLOBAL) return;
+      const el = document.getElementById('s-vol');
+      el.innerHTML = `
+    <div class="card">
+      <div class="ct">Modelación de Volatilidad Condicional — ARCH / GARCH / EGARCH</div>
+      <p style="font-size:12px;color:#94a3b8;margin-bottom:14px;line-height:1.6">
+        A diferencia de los modelos clásicos que asumen varianza constante (homocedasticidad), los modelos ARCH/GARCH
+        capturan el <strong>agrupamiento de volatilidad</strong> (<em>volatility clustering</em>): períodos de alta
+        volatilidad tienden a ser seguidos por períodos de alta volatilidad, y viceversa. <br>
+        La metodología sigue 6 etapas: <strong>1)</strong> Transformación a log-rendimientos y test ADF,
+        <strong>2)</strong> Detección de efectos ARCH (Engle LM, Ljung-Box r²),
+        <strong>3)</strong> Especificación de modelos,
+        <strong>4)</strong> Estimación MLE,
+        <strong>5)</strong> Selección por AIC/BIC,
+        <strong>6)</strong> Diagnóstico de residuos estandarizados.
+      </p>
+      <select class="sel-dd" id="dd-vol" onchange="onVolChange()">
+        ${GLOBAL.tickers.map((t, i) => `<option value="${i}">${t}</option>`).join('')}
+      </select>
+      <div id="vol-content" style="color:#64748b;padding:20px;text-align:center">Cargando datos de volatilidad...</div>
+    </div>`;
+      onVolChange();
+    }
+
+    async function onVolChange() {
+      const idx = parseInt(document.getElementById('dd-vol').value);
+      const cont = document.getElementById('vol-content');
+      cont.innerHTML = '<div style="text-align:center;padding:50px;color:#94a3b8"><div class="spinner" style="margin:0 auto 15px"></div>Ajustando modelos ARCH/GARCH/EGARCH...<br><span style="font-size:11px;color:#64748b;margin-top:10px;display:block">(Esto puede tardar unos segundos debido a la estimación MLE)</span></div>';
+
+      const d = await loadVolData(idx);
+
+      if (!d || d.error) {
+        cont.innerHTML = `
+          <div style="text-align:center;padding:50px;color:#f87171">
+            <div style="font-size:40px;margin-bottom:15px">⚠️</div>
+            <div style="font-weight:600;margin-bottom:10px">Error cargando datos de volatilidad</div>
+            <div style="font-size:13px;color:#64748b;max-width:400px;margin:0 auto">${d?.message || "La librería 'arch' podría no estar instalada o los datos no permiten la convergencia del modelo."}</div>
+            <button class="btn-analizar" style="margin-top:20px;background:#334155;color:#f1f5f9" onclick="delete GLOBAL.volData['${GLOBAL.tickers[idx]}']; onVolChange()">Reintentar</button>
+          </div>`;
+        return;
+      }
+      const t = d.ticker;
+      const adf = d.adf_test;
+      const alm = d.arch_lm_test;
+      const lbsq = d.ljung_box_cuadrados;
+      const diag = d.diagnostico_residuos;
+
+      cont.innerHTML = `
+    <div class="g3" style="margin-top:8px">
+      <div class="mc" style="border-color:${adf.es_estacionaria ? '#10b981' : '#f87171'}">
+        <div class="ml">1. Test ADF (Estacionariedad)</div>
+        <div class="mv" style="font-size:16px">${adf.es_estacionaria ? 'ESTACIONARIA' : 'NO ESTACIONARIA'}</div>
+        <div class="ms">Estad: ${adf.estadistico} &nbsp; p: ${adf.p_valor} &nbsp; Lags: ${adf.lags_usados}</div>
+      </div>
+      <div class="mc" style="border-color:${alm.hay_efectos_arch ? '#10b981' : '#f59e0b'}">
+        <div class="ml">2. ARCH-LM Engle (5 lags)</div>
+        <div class="mv" style="font-size:16px">${alm.hay_efectos_arch ? 'EFECTOS ARCH ✓' : 'SIN EFECTOS ARCH'}</div>
+        <div class="ms">LM: ${alm.estadistico} &nbsp; p: ${alm.p_valor}</div>
+      </div>
+      <div class="mc" style="border-color:${lbsq.hay_autocorrelacion ? '#10b981' : '#f59e0b'}">
+        <div class="ml">3. Ljung-Box r² (lag 10)</div>
+        <div class="mv" style="font-size:16px">${lbsq.hay_autocorrelacion ? 'DEPENDENCIA ✓' : 'SIN DEPENDENCIA'}</div>
+        <div class="ms">Q: ${lbsq.estadistico} &nbsp; p: ${lbsq.p_valor}</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <div class="ct">Comparación de Modelos — Estimación por Máxima Verosimilitud (MLE)</div>
+      <div style="overflow-x:auto">
+      <table class="ht" style="text-align:center">
+        <thead>
+          <tr>
+            <th style="text-align:center">Modelo</th>
+            <th style="text-align:center">Log-Likelihood</th>
+            <th style="text-align:center">AIC</th>
+            <th style="text-align:center">BIC</th>
+            <th style="text-align:center">σ Anualizada</th>
+            <th style="text-align:center">Selección</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${d.modelos_comparados.map(m => `<tr style="${m.es_mejor ? 'background:rgba(16,185,129,.08)' : ''}">
+            <td>${m.nombre}</td>
+            <td style="font-family:'SF Mono',monospace">${m.log_likelihood}</td>
+            <td style="font-family:'SF Mono',monospace;color:${m.es_mejor ? '#10b981' : '#e2e8f0'}">${m.aic}</td>
+            <td style="font-family:'SF Mono',monospace">${m.bic}</td>
+            <td style="font-family:'SF Mono',monospace">${pct(m.volatilidad_anualizada)}</td>
+            <td>${m.es_mejor ? '<span class="sig sb">★ MEJOR</span>' : ''}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      </div>
+    <div class="card">
+      <div class="ct">4. Resumen Econométrico Detallado (Motor: GARCH-t)</div>
+      <div style="background:#0f1117;border-radius:10px;padding:15px;border:1px solid #1e2435">
+        <div style="display:flex;justify-content:space-between;margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #1e2435">
+          <div>
+            <div style="font-size:10px;color:#64748b;text-transform:uppercase">Modelo Seleccionado</div>
+            <div style="font-size:16px;font-weight:700;color:#10b981">${d.mejor_modelo}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:10px;color:#64748b;text-transform:uppercase">Distribución de Errores</div>
+            <div style="font-size:16px;font-weight:700;color:#3b82f6">${d.resumen_modelo.distribucion}</div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom:15px">
+          <div style="font-size:11px;color:#94a3b8;margin-bottom:8px">Coeficientes del Modelo y Significancia:</div>
+          <table class="ht" style="font-size:11px">
+            <thead><tr><th style="text-align:left">Parámetro</th><th style="text-align:right">Valor</th><th style="text-align:right">p-valor</th><th style="text-align:center">Sig.</th></tr></thead>
+            <tbody>
+              ${d.resumen_modelo.coeficientes.map(c => `
+                <tr>
+                  <td style="text-align:left;font-family:'SF Mono',monospace;color:#e2e8f0">${c.parametro}</td>
+                  <td style="text-align:right;font-family:'SF Mono',monospace">${c.valor.toFixed(6)}</td>
+                  <td style="text-align:right;font-family:'SF Mono',monospace;color:${c.p_valor < 0.05 ? '#10b981' : '#64748b'}">${c.p_valor.toFixed(4)}</td>
+                  <td style="text-align:center;color:#f59e0b;font-weight:700">${c.significancia}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <div style="font-size:9px;color:#475569;margin-top:4px">Significancia: *** p<0.01, ** p<0.05, * p<0.1</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+          <div style="background:#1e2435;padding:8px;border-radius:6px;text-align:center">
+            <div style="font-size:9px;color:#64748b;text-transform:uppercase">Log-Likelihood</div>
+            <div style="font-size:13px;font-family:'SF Mono',monospace">${d.resumen_modelo.loglik}</div>
+          </div>
+          <div style="background:#1e2435;padding:8px;border-radius:6px;text-align:center">
+            <div style="font-size:9px;color:#64748b;text-transform:uppercase">AIC</div>
+            <div style="font-size:13px;font-family:'SF Mono',monospace;color:#10b981">${d.resumen_modelo.aic}</div>
+          </div>
+          <div style="background:#1e2435;padding:8px;border-radius:6px;text-align:center">
+            <div style="font-size:9px;color:#64748b;text-transform:uppercase">BIC</div>
+            <div style="font-size:13px;font-family:'SF Mono',monospace">${d.resumen_modelo.bic}</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#64748b;margin-top:10px;line-height:1.4">
+        🔍 <strong>Interpretación:</strong> La persistencia de la volatilidad ($\alpha + \beta$) cercana a 1 sugiere "memoria larga" en las crisis. 
+        ${d.resumen_modelo.coeficientes.some(c => c.parametro.includes('gamma') && c.p_valor < 0.05) ? '<br>⚠️ <strong>Efecto Apalancamiento detectado:</strong> Las caídas de precio generan mayor volatilidad que las subidas.' : ''}
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="ct">Rendimientos al Cuadrado r²(t) — Evidencia de Agrupamiento de Volatilidad</div>
+      <div style="position:relative;height:180px"><canvas id="c-retsq"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="ct">Volatilidad Condicional Anualizada σ(t) — ${d.mejor_modelo}</div>
+      <div style="position:relative;height:220px"><canvas id="c-volcond"></canvas></div>
+    </div>
+
+    <div class="g2">
+      <div class="card" style="margin-bottom:0">
+        <div class="ct">Pronóstico de Volatilidad — 30 Días</div>
+        <div style="position:relative;height:200px"><canvas id="c-volfore"></canvas></div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="ct">Residuos Estandarizados z(t) = â(t)/σ̂(t)</div>
+        <div style="position:relative;height:200px"><canvas id="c-stdres"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.25rem">
+      <div class="ct">6. Diagnóstico y Validación del Modelo</div>
+      <div style="overflow-x:auto">
+      <table class="ht">
+        <thead><tr><th>Métrica</th><th>Valor</th><th>Resultado</th></tr></thead>
+        <tbody>
+          <tr><td>Media residuos z(t)</td><td style="font-family:'SF Mono',monospace">${diag.media}</td><td>${Math.abs(diag.media) < 0.1 ? '<span class="sig sb">✓ ≈ 0</span>' : '<span class="sig ss">✗ ≠ 0</span>'}</td></tr>
+          <tr><td>Desv. Estándar z(t)</td><td style="font-family:'SF Mono',monospace">${diag.desv_estandar}</td><td>${Math.abs(diag.desv_estandar - 1) < 0.15 ? '<span class="sig sb">✓ ≈ 1</span>' : '<span class="sig ss">✗ ≠ 1</span>'}</td></tr>
+          <tr><td>Asimetría z(t)</td><td style="font-family:'SF Mono',monospace">${diag.asimetria}</td><td>${Math.abs(diag.asimetria) < 0.5 ? '<span class="sig sb">✓ Simétrico</span>' : '<span class="sig sn">Asimétrico</span>'}</td></tr>
+          <tr><td>Curtosis Exceso z(t)</td><td style="font-family:'SF Mono',monospace">${diag.curtosis_exceso}</td><td>${diag.curtosis_exceso > 1 ? '<span class="sig sn">Colas pesadas</span>' : '<span class="sig sb">✓ Normal</span>'}</td></tr>
+          <tr><td>Jarque-Bera z(t)</td><td style="font-family:'SF Mono',monospace">JB=${diag.jb_estadistico} &nbsp; p=${diag.jb_p_valor}</td><td>${diag.residuos_normales ? '<span class="sig sb">✓ Normalidad</span>' : '<span class="sig ss">✗ No normal</span>'}</td></tr>
+          <tr><td>Ljung-Box z(t) (lag 10)</td><td style="font-family:'SF Mono',monospace">p=${diag.ljung_box_p_valor}</td><td>${diag.sin_autocorrelacion ? '<span class="sig sb">✓ Sin autocorrelación</span>' : '<span class="sig ss">✗ Autocorrelación</span>'}</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div style="font-size:11px;color:#64748b;margin-top:10px;line-height:1.5">
+        Si los residuos estandarizados z(t) no muestran autocorrelación y z²(t) no presenta efectos ARCH remanentes, el modelo está correctamente especificado.
+        ${!diag.residuos_normales ? ' Se recomienda re-estimar con distribución <strong>t-Student</strong> para capturar colas pesadas.' : ''}
+      </div>
+    </div>`;
+
+      // ── Charts ──
+      const stepV = a => { const s = Math.ceil(a.length / 200); return a.filter((_, i) => i % s === 0); };
+
+      // Rendimientos al cuadrado
+      const rSq = stepV(d.serie_rendimientos_cuadrados);
+      regCh('c-retsq', {
+        type: 'bar', data: {
+          labels: rSq.map(x => x.fecha), datasets: [{
+            label: 'r²(t)', data: rSq.map(x => x.valor * 10000), backgroundColor: 'rgba(99,102,241,.4)', borderWidth: 0
+          }]
+        }, options: {
+          responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+          scales: { x: { ...axBase, ticks: { ...axBase.ticks, maxTicksLimit: 8 } }, y: { ...axBase, ticks: { ...axBase.ticks, callback: v => v.toFixed(1) + 'bp' } } }
+        }
+      });
+
+      // Volatilidad condicional
+      const vC = stepV(d.serie_volatilidad_condicional);
+      regCh('c-volcond', {
+        type: 'line', data: {
+          labels: vC.map(x => x.fecha), datasets: [{
+            label: 'σ(t) Anualizada', data: vC.map(x => x.volatilidad * 100), borderColor: '#f59e0b', borderWidth: 1.8, pointRadius: 0, fill: true, backgroundColor: 'rgba(245,158,11,.08)', tension: .3
+          }]
+        }, options: {
+          responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+          scales: { x: { ...axBase, ticks: { ...axBase.ticks, maxTicksLimit: 8 } }, y: { ...axBase, ticks: { ...axBase.ticks, callback: v => v.toFixed(0) + '%' } } }
+        }
+      });
+
+      // Pronóstico
+      regCh('c-volfore', {
+        type: 'line', data: {
+          labels: Array.from({ length: d.pronostico_volatilidad.length }, (_, i) => 'D+' + (i + 1)),
+          datasets: [{ label: 'Pronóstico σ', data: d.pronostico_volatilidad.map(v => v * Math.sqrt(252) * 100), borderColor: '#10b981', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#10b981', fill: true, backgroundColor: 'rgba(16,185,129,.07)', tension: .4 }]
+        }, options: {
+          responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+          scales: { x: { ...axBase }, y: { ...axBase, ticks: { ...axBase.ticks, callback: v => v.toFixed(1) + '%' } } }
+        }
+      });
+
+      // Residuos estandarizados
+      const rS = stepV(d.serie_residuos_estandarizados);
+      regCh('c-stdres', {
+        type: 'line', data: {
+          labels: rS.map(x => x.fecha), datasets: [{
+            label: 'z(t)', data: rS.map(x => x.valor), borderColor: '#a78bfa', borderWidth: 1, pointRadius: 0, fill: false, tension: .2
+          }]
+        }, options: {
+          responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+          scales: { x: { ...axBase, ticks: { ...axBase.ticks, maxTicksLimit: 8 } }, y: { ...axBase } }
+        }
+      });
+    }
+  </script>
 </body>
+
 </html>

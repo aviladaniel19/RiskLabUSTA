@@ -371,6 +371,37 @@ async def get_garch(
     return resultado
 
 
+# ── ENDPOINT 5b: /volatilidad/{ticker} ────────
+
+@app.get(
+    "/volatilidad/{ticker}",
+    tags=["GARCH"],
+    summary="Análisis completo de modelación de volatilidad condicional",
+    description=(
+        "Endpoint completo para la sección de Volatilidad. "
+        "Incluye: test ADF de estacionariedad, prueba ARCH-LM de Engle, "
+        "Ljung-Box sobre residuales², comparación ARCH/GARCH/EGARCH, "
+        "serie de volatilidad condicional, rendimientos², pronóstico 30d, "
+        "y diagnóstico exhaustivo de residuos estandarizados."
+    ),
+)
+@log_request
+async def get_volatilidad(
+    ticker: str,
+    periodo: str = Query(default="2y"),
+    svc: RiskService = Depends(get_risk_service),
+):
+    ticker = ticker.upper()
+    try:
+        resultado = svc.calcular_volatilidad_completo(ticker, periodo=periodo)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Error en análisis de volatilidad: {e}",
+        )
+    return resultado
+
+
 # ── ENDPOINT 6: /capm ─────────────────────────
 
 @app.get(

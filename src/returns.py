@@ -169,5 +169,83 @@ def interpretar_hechos_estilizados(rendimientos: pd.Series,
         "volatilidad más que las subidas de la misma magnitud. Los modelos EGARCH y "
         "GJR-GARCH capturan este efecto asimétrico.\n"
     )
-
+    
     return texto
+
+def calcular_qq_plot(rendimientos: pd.Series, n_puntos: int = 100) -> list[dict]:
+    """
+    Genera puntos para un gráfico Q-Q (Cuantil-Cuantil).
+    Compara los cuantiles empíricos de los rendimientos con los cuantiles
+    teóricos de una distribución normal estándar.
+    """
+    datos = rendimientos.dropna().sort_values()
+    n = len(datos)
+    
+    # Cuantiles teóricos (Z-scores)
+    # Usamos una muestra de n_puntos para no saturar el frontend
+    proporciones = np.linspace(0.01, 0.99, n_puntos)
+    teoricos = stats.norm.ppf(proporciones)
+    
+    # Cuantiles empíricos (estandarizados)
+    media, std = datos.mean(), datos.std()
+    datos_std = (datos - media) / std
+    empiricos = np.percentile(datos_std, proporciones * 100)
+    
+    puntos = []
+    for t, e in zip(teoricos, empiricos):
+        puntos.append({"teorico": round(float(t), 4), "empirico": round(float(e), 4)})
+    
+    return puntos
+
+
+def calcular_stats_boxplot(rendimientos: pd.Series) -> dict:
+    """Calcula los 5 números estadísticos para un Boxplot."""
+    d = rendimientos.dropna()
+    return {
+        "min": float(d.min()),
+        "q1": float(np.percentile(d, 25)),
+        "med": float(d.median()),
+        "q3": float(np.percentile(d, 75)),
+        "max": float(d.max())
+    }
+
+
+def test_kupiec(excepciones: int, n_observaciones: int, nivel_confianza: float) -> dict:
+    """
+    Realiza el Test de Kupiec (Proportion of Failures - POF) para backtesting de VaR.
+    
+    H0: El modelo de VaR es correcto (la tasa de fallos observada es igual a la esperada).
+    Si p-valor < 0.05 → se rechaza el modelo.
+    """
+    p = 1 - nivel_confianza  # Probabilidad de excepción esperada
+    n = n_observaciones
+    x = excepciones
+    
+    if x == 0:
+        # Si no hay excepciones, el modelo es conservador/bueno
+        return {"estadistico": 0.0, "p_valor": 1.0, "valido": True, "interpretacion": "Modelo válido (conservador)."}
+
+    # Tasa observada
+    p_hat = x / n
+    
+    # Likelihood Ratio (LR)
+    try:
+        lr = -2 * (
+            (n - x) * np.log(1 - p) + x * np.log(p) -
+            (n - x) * np.log(1 - p_hat) - x * np.log(p_hat)
+        )
+        # El estadístico LR sigue una chi-cuadrado con 1 grado de libertad
+        p_value = 1 - stats.chi2.cdf(lr, df=1)
+    except Exception:
+        return {"estadistico": 0.0, "p_valor": 0.01, "valido": False, "interpretacion": "Error en cálculo de Kupiec."}
+
+    return {
+        "estadistico": round(float(lr), 4),
+        "p_valor": round(float(p_value), 6),
+        "valido": bool(p_value > 0.05),
+        "interpretacion": (
+            "Modelo Válido: No se rechaza la precisión del VaR."
+            if p_value > 0.05 else
+            "Modelo Inválido: La tasa de excepciones difiere significativamente de la esperada."
+        )
+    }

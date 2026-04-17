@@ -101,6 +101,8 @@ class RendimientosResponse(BaseModel):
     jarque_bera: PruebaEstadistica
     shapiro_wilk: PruebaEstadistica
     rendimientos: list[RendimientosPuntoResponse]
+    qq_plot: list[dict[str, float]] = Field(..., description="Puntos para gráfico Q-Q")
+    boxplot: dict[str, float] = Field(..., description="Estadísticos para boxplot (min, q1, med, q3, max)")
     hechos_estilizados: str = Field(..., description="Texto interpretativo")
 
 
@@ -246,6 +248,7 @@ class VaRResponse(BaseModel):
     historico: VaRMetodo
     montecarlo: VaRMetodo
     cvar: dict[str, Any]
+    backtesting: dict[str, Any] = Field(..., description="Resultados del Test de Kupiec")
     rendimiento_portafolio_anual: float
     volatilidad_portafolio_anual: float
 

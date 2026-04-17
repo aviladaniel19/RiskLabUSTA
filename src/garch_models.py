@@ -21,9 +21,21 @@ def ajustar_arch(rendimientos: pd.Series, p: int = 1) -> dict:
     -------
     dict con modelo ajustado, resumen y métricas.
     """
-    datos = rendimientos.dropna() * 100  # Escalar a porcentaje para estabilidad
-    modelo = arch_model(datos, vol="ARCH", p=p, mean="Constant", dist="normal")
+    datos = rendimientos.dropna() * 100
+    modelo = arch_model(datos, vol="ARCH", p=p, mean="Constant", dist="studentst")
     resultado = modelo.fit(disp="off")
+
+    # Extraer coeficientes y p-valores
+    params = resultado.params
+    pvalues = resultado.pvalues
+    coefs = []
+    for name in params.index:
+        coefs.append({
+            "parametro": name,
+            "valor": round(float(params[name]), 6),
+            "p_valor": round(float(pvalues[name]), 6),
+            "significancia": "***" if pvalues[name] < 0.01 else ("**" if pvalues[name] < 0.05 else ("*" if pvalues[name] < 0.1 else ""))
+        })
 
     return {
         "nombre": f"ARCH({p})",
@@ -33,14 +45,27 @@ def ajustar_arch(rendimientos: pd.Series, p: int = 1) -> dict:
         "loglik": resultado.loglikelihood,
         "volatilidad_condicional": resultado.conditional_volatility / 100,
         "residuos_estandarizados": resultado.std_resid,
+        "coeficientes": coefs,
+        "distribución": "t-Student"
     }
 
 
 def ajustar_garch(rendimientos: pd.Series, p: int = 1, q: int = 1) -> dict:
     """Ajusta un modelo GARCH(p,q)."""
     datos = rendimientos.dropna() * 100
-    modelo = arch_model(datos, vol="Garch", p=p, q=q, mean="Constant", dist="normal")
+    modelo = arch_model(datos, vol="Garch", p=p, q=q, mean="Constant", dist="studentst")
     resultado = modelo.fit(disp="off")
+
+    params = resultado.params
+    pvalues = resultado.pvalues
+    coefs = []
+    for name in params.index:
+        coefs.append({
+            "parametro": name,
+            "valor": round(float(params[name]), 6),
+            "p_valor": round(float(pvalues[name]), 6),
+            "significancia": "***" if pvalues[name] < 0.01 else ("**" if pvalues[name] < 0.05 else ("*" if pvalues[name] < 0.1 else ""))
+        })
 
     return {
         "nombre": f"GARCH({p},{q})",
@@ -50,14 +75,27 @@ def ajustar_garch(rendimientos: pd.Series, p: int = 1, q: int = 1) -> dict:
         "loglik": resultado.loglikelihood,
         "volatilidad_condicional": resultado.conditional_volatility / 100,
         "residuos_estandarizados": resultado.std_resid,
+        "coeficientes": coefs,
+        "distribución": "t-Student"
     }
 
 
 def ajustar_egarch(rendimientos: pd.Series, p: int = 1, q: int = 1) -> dict:
     """Ajusta un modelo EGARCH(p,q) — captura el efecto apalancamiento."""
     datos = rendimientos.dropna() * 100
-    modelo = arch_model(datos, vol="EGARCH", p=p, q=q, mean="Constant", dist="normal")
+    modelo = arch_model(datos, vol="EGARCH", p=p, q=q, mean="Constant", dist="studentst")
     resultado = modelo.fit(disp="off")
+
+    params = resultado.params
+    pvalues = resultado.pvalues
+    coefs = []
+    for name in params.index:
+        coefs.append({
+            "parametro": name,
+            "valor": round(float(params[name]), 6),
+            "p_valor": round(float(pvalues[name]), 6),
+            "significancia": "***" if pvalues[name] < 0.01 else ("**" if pvalues[name] < 0.05 else ("*" if pvalues[name] < 0.1 else ""))
+        })
 
     return {
         "nombre": f"EGARCH({p},{q})",
@@ -67,6 +105,8 @@ def ajustar_egarch(rendimientos: pd.Series, p: int = 1, q: int = 1) -> dict:
         "loglik": resultado.loglikelihood,
         "volatilidad_condicional": resultado.conditional_volatility / 100,
         "residuos_estandarizados": resultado.std_resid,
+        "coeficientes": coefs,
+        "distribución": "t-Student"
     }
 
 
@@ -74,11 +114,24 @@ def comparar_modelos(rendimientos: pd.Series) -> pd.DataFrame:
     """
     Ajusta ARCH(1), GARCH(1,1) y EGARCH(1,1) y retorna tabla comparativa.
     """
-    modelos = [
-        ajustar_arch(rendimientos, p=1),
-        ajustar_garch(rendimientos, p=1, q=1),
-        ajustar_egarch(rendimientos, p=1, q=1),
+    model_funcs = [
+        lambda: ajustar_arch(rendimientos, p=1),
+        lambda: ajustar_garch(rendimientos, p=1, q=1),
+        lambda: ajustar_egarch(rendimientos, p=1, q=1),
     ]
+
+    modelos = []
+    for func in model_funcs:
+        try:
+            m = func()
+            modelos.append(m)
+        except Exception as e:
+            # Si un modelo falla, lo ignoramos para no romper el reporte
+            continue
+
+    if not modelos:
+        raise ValueError("Ninguno de los modelos ARCH/GARCH logró converger con los datos proporcionados.")
+
 
     tabla = pd.DataFrame([{
         "Modelo": m["nombre"],
@@ -114,9 +167,9 @@ def diagnostico_residuos(modelo_dict: dict) -> dict:
         "std_residuos": round(float(std), 4),
         "asimetria": round(float(skew), 4),
         "curtosis_exc": round(float(kurt), 4),
-        "JB_estadistico": round(jb_stat, 4),
-        "JB_p_valor": round(jb_pval, 6),
-        "residuos_normales": jb_pval > 0.05,
+        "JB_estadistico": float(round(jb_stat, 4)),
+        "JB_p_valor": float(round(jb_pval, 6)),
+        "residuos_normales": bool(jb_pval > 0.05),
         "interpretacion": (
             "Los residuos estandarizados satisfacen normalidad (p > 0.05). "
             "El modelo captura adecuadamente la dinámica de la volatilidad."
@@ -143,9 +196,11 @@ def pronostico_volatilidad(modelo_dict: dict, horizonte: int = 30) -> pd.DataFra
     DataFrame con fecha relativa y volatilidad pronosticada.
     """
     resultado = modelo_dict["resultado"]
-    forecast = resultado.forecast(horizon=horizonte)
+    # Usamos method='simulation' porque 'analytic' no soporta horizonte > 1 en modelos como EGARCH
+    forecast = resultado.forecast(horizon=horizonte, method='simulation', reindex=False)
 
     # Varianza pronosticada → volatilidad
+    # En simulation, variance es un DataFrame (1, horizonte)
     varianza = forecast.variance.iloc[-1].values
     volatilidad = np.sqrt(varianza) / 100  # Des-escalar
 
